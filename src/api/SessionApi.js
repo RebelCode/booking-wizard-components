@@ -1,18 +1,18 @@
-import Api from './Api'
+import { Api } from '@rebelcode/std-lib'
 
 export default class SessionsApi extends Api {
   /**
    * Storing all sessions to work correctly with range caching system.
    *
-   * @type {object[]}
+   * @type {BookingSession[]}
    */
   sessions = []
 
   /**
    * Api constructor
    *
-   * @param {object} httpClient Http client like axios
-   * @param {object} config
+   * @param {HttpClient} httpClient Http client like axios
+   * @param {Object<string, {method: String, endpoint: String}>} config
    * @param {RequestCache} cache Requests caching implementation.
    * @param {RangeCache} rangeCache Range cache implementation.
    * @param {Transformer} sessionReadTransformer Session read transformer.
@@ -30,16 +30,21 @@ export default class SessionsApi extends Api {
    * Fetch session list using search query
    *
    * @param params
+   *
    * @return {*}
    */
   fetch (params) {
-    const uncachedRange = this.rangeCache.uncached(params)
+    const uncachedRange = this.rangeCache.getUncachedRange(params)
     if (!uncachedRange) {
       return Promise.resolve(this._getSessions(params))
     }
 
     const fetchConfig = this.config['fetch']
-    return this.http[fetchConfig.method](fetchConfig.endpoint, this.prepareParams({ params })).then(response => {
+    return this.http.request({
+      method: fetchConfig.method,
+      url: fetchConfig.endpoint,
+      params
+    }).then(response => {
       this.rangeCache.remember(uncachedRange)
       const sessions = response.data.items.map(session => {
         return this.sessionReadTransformer.transform(session)
@@ -55,7 +60,7 @@ export default class SessionsApi extends Api {
    * @param {Number} service Service id to get sessions for
    * @param {Number} start Start range in ISO8601 format
    *
-   * @return {object[]}
+   * @return {BookingSession[]}
    */
   _getSessions({ service, start }) {
     start = this.moment(start).unix()
@@ -68,7 +73,7 @@ export default class SessionsApi extends Api {
   /**
    * Store sessions in one place.
    *
-   * @param {object[]} sessions
+   * @param {BookingSession[]} sessions
    */
   _storeSessions(sessions) {
     this.sessions = [...this.sessions, ...sessions]

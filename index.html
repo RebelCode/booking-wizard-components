@@ -104,6 +104,7 @@
         bookingWizardComponents: '/dist/lib.min',
         cjs: 'https://rawgit.com/guybedford/cjs/master/cjs',
         'amd-loader': 'https://rawgit.com/guybedford/amd-loader/master/amd-loader',
+        stdLib: '/dist/std-lib',
         bottle: 'https://cdnjs.cloudflare.com/ajax/libs/bottlejs/1.6.1/bottle.min',
         vue: 'https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.4/vue',
         axios: 'https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min',
@@ -117,7 +118,7 @@
     })
 
     var dependenciesList = ['bookingWizardComponents','uiFramework', 'bottle', 'vue', 'axios', 'humanizeDuration', 'cjs!datepicker',
-      'moment', 'lodash', 'cjs!momentRange']
+      'moment', 'lodash', 'cjs!momentRange', 'stdLib']
 
     function defineServices (di, dependencies) {
       di.factory('vue', function () {
@@ -176,11 +177,11 @@
       di.factory('sessionApi', function (container) {
         return new dependencies.bookingWizardComponents.SessionApi(
           dependencies.axios,
-          container.config.endpoints,
-          (new dependencies.bookingWizardComponents.RequestCache(function (s) {
+          container.config.endpoints.sessions,
+          (new dependencies.stdLib.RequestCache(function (s) {
             return s
           })),
-          (new dependencies.bookingWizardComponents.RangeCache(container.moment, dependencies.lodash)),
+          (new dependencies.bookingWizardComponents.RangeCache(container.moment, dependencies.lodash.differenceWith, dependencies.lodash.isEqual)),
           container.sessionReadTransformer,
           container.moment
         )
@@ -189,9 +190,11 @@
       di.factory('config', function () {
         return {
           endpoints: {
-            'fetch': {
-              'method': 'get',
-              'endpoint': 'http://scotchbox.local/index.php?rest_route=/eddbk/v1/sessions/',
+            sessions: {
+              'fetch': {
+                'method': 'get',
+                'endpoint': 'http://scotchbox.local/index.php?rest_route=/eddbk/v1/sessions/',
+              }
             }
           },
           datetime: {
@@ -207,10 +210,7 @@
       })
 
       di.factory('sessionReadTransformer', function (container) {
-        return new dependencies.bookingWizardComponents.SessionReadTransformer({
-          moment: container.moment,
-          dateFormats: container.config.datetime
-        })
+        return new dependencies.bookingWizardComponents.SessionReadTransformer(container.moment)
       })
 
       di.factory('document', function () {

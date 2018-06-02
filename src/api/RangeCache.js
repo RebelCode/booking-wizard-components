@@ -9,7 +9,7 @@ export default class RangeCache {
    *
    * @since [*next-version*]
    *
-   * @type {Array}
+   * @type {BookingSessionsRange[]}
    */
   rangeCache = []
 
@@ -18,13 +18,15 @@ export default class RangeCache {
    *
    * @since [*next-version*]
    *
-   * @param {moment} moment
-   * @param {_} lodash
-   * @param {String} period
+   * @param {moment} moment Moment JS.
+   * @param {Function} differenceWith Function to finding difference between arrays using compare function.
+   * @param {Function} isEqual Compare function that determines that objects are same.
+   * @param {String} [period=month] Period of range cache
    */
-  constructor (moment, lodash, period = 'month') {
+  constructor (moment, differenceWith, isEqual, period = 'month') {
     this.moment = moment
-    this.lodash = lodash
+    this.differenceWith = differenceWith
+    this.isEqual = isEqual
     this.period = period
   }
 
@@ -34,17 +36,17 @@ export default class RangeCache {
    *
    * @since [*next-version*]
    *
-   * @param service
-   * @param start
-   * @param end
+   * @param {Number} service Service ID.
+   * @param {String} start Range start datetime in ISO8601.
+   * @param {String} end Range end datetime in ISO8601
    *
-   * @return {*}
+   * @return {BookingSessionsRange|null}
    */
-  uncached ({service, start, end}) {
+  getUncachedRange ({service, start, end}) {
     // transform given range to the list of full months ranges
     const ranges = this._getFullPeriodRanges({service, start, end})
     // look which months from this list are not cached
-    const uncached = this.lodash.differenceWith(ranges, this.rangeCache, this.lodash.isEqual)
+    const uncached = this.differenceWith(ranges, this.rangeCache, this.isEqual)
     // to optimise the number of requests, we are merging uncached ranges by taking only first and last timestamps of the list
     if (uncached.length) {
       const first = uncached[0]
@@ -63,15 +65,15 @@ export default class RangeCache {
    *
    * @since [*next-version*]
    *
-   * @param serviceId
-   * @param start
-   * @param end
+   * @param {Number} service Service ID.
+   * @param {String} start Range start datetime in ISO8601.
+   * @param {String} end Range end datetime in ISO8601
    *
-   * @return {*[]|*}
+   * @return {BookingSessionsRange[]}
    */
   remember ({service, start, end}) {
     const ranges = this._getFullPeriodRanges({service, start, end})
-    const uncached = this.lodash.differenceWith(ranges, this.rangeCache, this.lodash.isEqual)
+    const uncached = this.differenceWith(ranges, this.rangeCache, this.isEqual)
     if (!uncached) {
       return
     }
@@ -84,11 +86,11 @@ export default class RangeCache {
    *
    * @since [*next-version*]
    *
-   * @param service
-   * @param start
-   * @param end
+   * @param {Number} service Service ID.
+   * @param {String} start Range start datetime in ISO8601.
+   * @param {String} end Range end datetime in ISO8601
    *
-   * @return {{service: *, start: (*|string), end: (*|string)}[]}
+   * @return {BookingSessionsRange[]}
    */
   _getFullPeriodRanges ({service, start, end}) {
     const range = this.moment.range(this.moment(start).startOf(this.period), this.moment(end).endOf(this.period))

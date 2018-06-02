@@ -1,4 +1,4 @@
-import Transformer from './Transformer'
+import { Transformer } from '@rebelcode/std-lib'
 
 /**
  * Transformer that applied to sessions before any interaction in UI.
@@ -7,9 +7,19 @@ import Transformer from './Transformer'
  */
 export default class SessionReadTransformer extends Transformer {
   /**
+   * Session read transformer constructor.
+   *
+   * @param {Function} moment Moment JS.
+   */
+  constructor (moment) {
+    super()
+    this.moment = moment
+  }
+
+  /**
    * Rules that will be applied in order for model.
    *
-   * @property {object} rules
+   * @property {Object.<string, TransformerRuleCallback>} rules
    */
   rules = {
     /**
