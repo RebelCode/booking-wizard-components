@@ -23,16 +23,14 @@ export default class SessionReadTransformer extends Transformer {
    */
   rules = {
     /**
-     * Add helping time related fields to model.
+     * Add duration field to model.
      *
      * @param {object} model Model to transform.
      *
      * @return {*}
      */
     start: (model) => {
-      model['startUnix'] = this.moment(model.start).unix()
-      model['endUnix'] = this.moment(model.end).unix()
-      model['duration'] = model.endUnix - model.startUnix
+      model['duration'] = this.moment(model.end).unix() - this.moment(model.start).unix()
       return model
     },
     /**

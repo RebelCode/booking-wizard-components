@@ -4,7 +4,7 @@ export default class SessionsApi extends Api {
   /**
    * Storing all sessions to work correctly with range caching system.
    *
-   * @type {BookingSession[]}
+   * @type {BookingStoredSession[]}
    */
   sessions = []
 
@@ -57,17 +57,16 @@ export default class SessionsApi extends Api {
   /**
    * Get sessions by given params.
    *
-   * @param {Number} service Service id to get sessions for
-   * @param {Number} start Start range in ISO8601 format
+   * @param {number} service Service id to get sessions for
+   * @param {string} start Start range in ISO8601 format
    *
    * @return {BookingSession[]}
    */
   _getSessions({ service, start }) {
-    start = this.moment(start).unix()
     return this.sessions.filter(session => {
-      return parseInt(session.service) === service
+      return session.service === service
         && session.startUnix >= start
-    })
+    }).map(this._cleanSessionQueryFields.bind(this))
   }
 
   /**
@@ -76,6 +75,32 @@ export default class SessionsApi extends Api {
    * @param {BookingSession[]} sessions
    */
   _storeSessions(sessions) {
-    this.sessions = [...this.sessions, ...sessions]
+    this.sessions = [...this.sessions, ...sessions.map(this._addSessionQueryFields.bind(this))]
+  }
+
+  /**
+   * Add helping fields on session before saving it to store.
+   *
+   * @param {BookingSession} session Session to save in store.
+   *
+   * @return {BookingStoredSession} Session with added fields.
+   */
+  _addSessionQueryFields (session) {
+    session = Object.assign({}, session)
+    session['startUnix'] = this.moment(session.start).unix()
+    return session
+  }
+
+  /**
+   * Remove fields that were added for saving booking session in store.
+   *
+   * @param {BookingStoredSession} session Session from store.
+   *
+   * @return {BookingSession} Booking session without querying fields.
+   */
+  _cleanSessionQueryFields (session) {
+    session = Object.assign({}, session)
+    delete session['startUnix']
+    return session
   }
 }

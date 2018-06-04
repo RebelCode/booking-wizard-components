@@ -7,13 +7,17 @@
 <body>
 <div id="app">
     <app inline-template>
-        <service-session-selector :service="service"
-                                  v-model="session"
-        ></service-session-selector>
+        <div>
+            <div>Selected session: <code>{{ session }}</code></div>
+            <service-session-selector :service="service"
+                                      v-model="session"
+            ></service-session-selector>
+        </div>
     </app>
 </div>
 <script type="text/x-template" id="service-session-selector-template">
     <div>
+        <div>value: <code>{{ value }}</code></div>
         <div class="form-row" v-if="isEditing">
             <div class="form-row__label form-row__label--smaller">
                 Session
@@ -45,14 +49,16 @@
                     ></datepicker>
                 </div>
             </div>
-            <session-picker v-model="session"
-                            :selected-day.sync="selectedDay"
-                            :service="service"
-                            :sessions="selectedDaySessions"
-                            :prev-available-day="prevAvailableDay"
-                            :next-available-day="nextAvailableDay"
-                            v-else
-            ></session-picker>
+            <div v-else>
+                <session-picker v-model="session"
+                                :selected-day.sync="selectedDay"
+                                :service="service"
+                                :sessions="selectedDaySessions"
+                                :prev-available-day="prevAvailableDay"
+                                :next-available-day="nextAvailableDay"
+                ></session-picker>
+                selectedSessionLabel: {{ selectedSessionLabel }}
+            </div>
         </template>
     </div>
 </script>
@@ -79,9 +85,9 @@
             <div class="form-row__input">
                 <div class="session-picker">
                     <div class="session-picker-header">
-                        <span :class="['dashicons dashicons-arrow-left', prevAvailableDay ? '' : 'disabled']" @click="goToPrevDay"></span>
+                        <button :disabled="prevAvailableDay ? false : 'disabled'" @click="goToPrevDay">Prev</button>
                         <span>{{ selectedDaySessionsLabel }}</span>
-                        <span :class="['dashicons dashicons-arrow-right', nextAvailableDay ? '' : 'disabled']" @click="goToNextDay"></span>
+                        <button :disabled="nextAvailableDay ? false : 'disabled'" @click="goToNextDay">Next</button>
                     </div>
                     <div class="session-picker-buttons">
                         <div v-for="session in visibleSessions"
