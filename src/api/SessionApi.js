@@ -63,6 +63,7 @@ export default class SessionsApi extends Api {
    * @return {BookingSession[]}
    */
   _getSessions({ service, start }) {
+    start = this.moment(start).unix()
     return this.sessions.filter(session => {
       return session.service === service
         && session.startUnix >= start
