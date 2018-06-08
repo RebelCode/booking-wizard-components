@@ -129,7 +129,6 @@ export default function CfSessionPicker (moment, dateFormats) {
       visibleSessions () {
         return this.sessions.filter((session) => {
           return session.duration === this.selectedSessionLength.sessionLength
-            && moment(session.start).isAfter()
         })
       },
 
