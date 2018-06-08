@@ -50,7 +50,7 @@ export default class SessionsApi extends Api {
         return this.sessionReadTransformer.transform(session)
       })
       this._storeSessions(sessions)
-      return sessions
+      return this._getSessions(params)
     })
   }
 
@@ -64,10 +64,12 @@ export default class SessionsApi extends Api {
    */
   _getSessions({ service, start }) {
     start = this.moment(start).unix()
+    const startNow = this.moment().unix()
+    start = startNow > start ? startNow : start
     return this.sessions.filter(session => {
       return session.service === service
         && session.startUnix >= start
-    }).map(this._cleanSessionQueryFields.bind(this))
+    }).map(session => this._cleanSessionQueryFields(session))
   }
 
   /**
@@ -76,7 +78,7 @@ export default class SessionsApi extends Api {
    * @param {BookingSession[]} sessions
    */
   _storeSessions(sessions) {
-    this.sessions = [...this.sessions, ...sessions.map(this._addSessionQueryFields.bind(this))]
+    this.sessions = [...this.sessions, ...sessions.map(session => this._addSessionQueryFields(session))]
   }
 
   /**
