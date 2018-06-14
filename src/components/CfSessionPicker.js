@@ -16,14 +16,33 @@ export default function CfSessionPicker (moment, dateFormats) {
   return {
     template: '#session-picker-template',
 
-    inject: [
+    inject: {
       /**
        * Function for transforming duration in seconds to human readable format.
        *
        * @since [*next-version*]
        */
-      'humanizeDuration',
-    ],
+      'humanizeDuration': 'humanizeDuration',
+
+      /**
+       * Function for creating moment instance in given timezone.
+       *
+       * @since [*next-version*]
+       *
+       * @property {Function} momentInTimezone
+       */
+      createMomentInTimezone: {
+        from: 'momentInTimezone',
+        default () {
+          return (value, timezone = null) => {
+            if (!timezone) {
+              return moment(value)
+            }
+            return moment.tz(value, timezone)
+          }
+        }
+      }
+    },
 
     data () {
       return {
@@ -71,6 +90,15 @@ export default function CfSessionPicker (moment, dateFormats) {
         default () {
           return []
         }
+      },
+
+      /**
+       * @since [*next-version*]
+       *
+       * @property {string|null} timezone Name of timezone in which sessions will be displayed.
+       */
+      timezone: {
+        default: null
       },
 
       /**
@@ -140,7 +168,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDayLabel () {
-        return moment(this.selectedDay).format(dateFormats.dayFull)
+        return this.momentInTimezone(this.selectedDay).format(dateFormats.dayFull)
       },
 
       /**
@@ -151,7 +179,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDaySessionsLabel () {
-        return moment(this.selectedDay).format(dateFormats.dayShort)
+        return this.momentInTimezone(this.selectedDay).format(dateFormats.dayShort)
       },
     },
 
@@ -182,7 +210,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @return {*}
        */
       sessionLabel (session) {
-        return moment(session.start).format(dateFormats.sessionTime)
+        return this.momentInTimezone(session.start).format(dateFormats.sessionTime)
       },
 
       /**
@@ -199,6 +227,20 @@ export default function CfSessionPicker (moment, dateFormats) {
           && this.value.start === session.start
           && this.value.end === session.end
           && this.value.resource === session.resource
+      },
+
+      /**
+       * Create moment object in timezone.
+       *
+       * @param {moment|string|Date} value Datetime value that can be accepted by moment.
+       *
+       * @return {moment}
+       */
+      momentInTimezone (value = null) {
+        if (!value) {
+          value = moment()
+        }
+        return this.createMomentInTimezone(value, this.timezone)
       },
 
       /**
