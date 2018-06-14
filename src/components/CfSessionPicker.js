@@ -35,10 +35,7 @@ export default function CfSessionPicker (moment, dateFormats) {
         from: 'createDatetime',
         default () {
           return (value, timezone) => {
-            if (!timezone) {
-              timezone = 'UTC'
-            }
-            return moment.tz(value, timezone)
+            return moment.tz(value, timezone || 'UTC')
           }
         }
       }

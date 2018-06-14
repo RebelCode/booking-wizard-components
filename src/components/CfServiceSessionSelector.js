@@ -53,10 +53,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         from: 'createDatetime',
         default () {
           return (value, timezone) => {
-            if (!timezone) {
-              timezone = 'UTC'
-            }
-            return moment.tz(value, timezone)
+            return moment.tz(value, timezone || 'UTC')
           }
         }
       }
