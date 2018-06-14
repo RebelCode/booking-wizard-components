@@ -29,7 +29,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        *
        * @since [*next-version*]
        *
-       * @property {Function} createDatetime
+       * @property {CreateDatetimeFunction} createDatetime
        */
       createDatetime: {
         from: 'createDatetime',

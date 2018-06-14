@@ -27,3 +27,12 @@
  * @param {string} start Range start datetime in ISO8601.
  * @param {string} end Range end datetime in ISO8601
  */
+
+/**
+ * Function for creating datetime in some timezone.
+ *
+ * @function CreateDatetimeFunction
+ *
+ * @param {string|Date} value Any value that should be used for creating date.
+ * @param {string} timezone Timezone in which date should be created
+ */

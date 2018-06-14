@@ -47,7 +47,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        *
        * @since [*next-version*]
        *
-       * @property {Function} createDatetime
+       * @property {CreateDatetimeFunction} createDatetime
        */
       createDatetime: {
         from: 'createDatetime',
