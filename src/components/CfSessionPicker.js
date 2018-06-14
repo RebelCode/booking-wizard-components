@@ -29,14 +29,14 @@ export default function CfSessionPicker (moment, dateFormats) {
        *
        * @since [*next-version*]
        *
-       * @property {Function} momentInTimezone
+       * @property {Function} createDatetime
        */
-      createMomentInTimezone: {
-        from: 'momentInTimezone',
+      createDatetime: {
+        from: 'createDatetime',
         default () {
-          return (value, timezone = null) => {
+          return (value, timezone) => {
             if (!timezone) {
-              return moment(value)
+              timezone = 'UTC'
             }
             return moment.tz(value, timezone)
           }
@@ -168,7 +168,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDayLabel () {
-        return this.momentInTimezone(this.selectedDay).format(dateFormats.dayFull)
+        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayFull)
       },
 
       /**
@@ -179,7 +179,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDaySessionsLabel () {
-        return this.momentInTimezone(this.selectedDay).format(dateFormats.dayShort)
+        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayShort)
       },
     },
 
@@ -210,7 +210,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @return {*}
        */
       sessionLabel (session) {
-        return this.momentInTimezone(session.start).format(dateFormats.sessionTime)
+        return this.createLocalDatetime(session.start).format(dateFormats.sessionTime)
       },
 
       /**
@@ -230,17 +230,17 @@ export default function CfSessionPicker (moment, dateFormats) {
       },
 
       /**
-       * Create moment object in timezone.
+       * Create moment object in local timezone.
        *
        * @param {moment|string|Date} value Datetime value that can be accepted by moment.
        *
        * @return {moment}
        */
-      momentInTimezone (value = null) {
+      createLocalDatetime (value = null) {
         if (!value) {
           value = moment()
         }
-        return this.createMomentInTimezone(value, this.timezone)
+        return this.createDatetime(value, this.timezone)
       },
 
       /**

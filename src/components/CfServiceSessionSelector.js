@@ -47,14 +47,14 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        *
        * @since [*next-version*]
        *
-       * @property {Function} momentInTimezone
+       * @property {Function} createDatetime
        */
-      createMomentInTimezone: {
-        from: 'momentInTimezone',
+      createDatetime: {
+        from: 'createDatetime',
         default () {
-          return (value, timezone = null) => {
+          return (value, timezone) => {
             if (!timezone) {
-              return moment(value)
+              timezone = 'UTC'
             }
             return moment.tz(value, timezone)
           }
@@ -249,7 +249,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (availableDaysCount - 1 === selectedDayIndex) {
           return null
         }
-        return this.momentInTimezone(this.availableDays[selectedDayIndex + 1]).format()
+        return this.createLocalDatetime(this.availableDays[selectedDayIndex + 1]).format()
       },
 
       /**
@@ -264,7 +264,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (selectedDayIndex === 0) {
           return null
         }
-        return this.momentInTimezone(this.availableDays[selectedDayIndex - 1]).format()
+        return this.createLocalDatetime(this.availableDays[selectedDayIndex - 1]).format()
       },
 
       /**
@@ -286,7 +286,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @property {Date}
        */
       currentDay () {
-        return this.momentInTimezone().startOf('day').toDate()
+        return this.createLocalDatetime().startOf('day').toDate()
       },
 
       /**
@@ -298,7 +298,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (!this.value) {
           return null
         }
-        const sessionStart = this.momentInTimezone(this.value.start)
+        const sessionStart = this.createLocalDatetime(this.value.start)
         return sessionStart.format(dateFormats.sessionTime) + ', ' + sessionStart.format(dateFormats.dayFull)
       }
     },
@@ -324,10 +324,10 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
       editSession () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
 
-        const sessionStart = this.momentInTimezone(this.preloadedSession.start)
+        const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
-        this.selectedDay = this.momentInTimezone(sessionStart).startOf('day').format()
-        this.selectedMonth = this.momentInTimezone(sessionStart).startOf('month').format()
+        this.selectedDay = this.createLocalDatetime(sessionStart).startOf('day').format()
+        this.selectedMonth = this.createLocalDatetime(sessionStart).startOf('month').format()
 
         this.loadSessions().then(() => {
           this.isEditing = false
@@ -403,7 +403,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
       _setCleanStateValues () {
         this.selectedDay = null
 
-        this.selectedMonth = this.momentInTimezone().toDate()
+        this.selectedMonth = this.createLocalDatetime().toDate()
         this.sessions = []
 
         this.$nextTick(() => {
@@ -439,7 +439,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @return {{service: Number, start: (string), end: (string)}}
        */
       _prepareSessionRequestParams () {
-        const currentDay = this.momentInTimezone()
+        const currentDay = this.createLocalDatetime()
         const firstDayOfMonth = moment(this.selectedMonth).startOf('month')
         const lastDayOfMonth = moment(this.selectedMonth).endOf('month')
 
@@ -454,17 +454,17 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
       },
 
       /**
-       * Create moment object in timezone.
+       * Create moment object in local timezone.
        *
        * @param {moment|string|Date} value Datetime value that can be accepted by moment.
        *
        * @return {moment}
        */
-      momentInTimezone (value = null) {
+      createLocalDatetime (value = null) {
         if (!value) {
           value = moment()
         }
-        return this.createMomentInTimezone(value, this.timezone)
+        return this.createDatetime(value, this.timezone)
       },
 
       /**
@@ -477,7 +477,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @return {string} Day key.
        */
       _getDayKey (value) {
-        return this.momentInTimezone(value).format(dateFormats.dayKey)
+        return this.createLocalDatetime(value).format(dateFormats.dayKey)
       }
     },
     components: {

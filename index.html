@@ -144,12 +144,12 @@
 
       di.factory('app', function () {
         return {
-          inject: ['service-session-selector'],
+          inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
               service: {"id":34,"name":"Yoga Crash","description":"","imageSrc":false,"bookingsEnabled":"1","sessionLengths":[{"sessionLength":2700,"price":{"amount":"100","currency":"USD","formatted":"$100.00"}},{"sessionLength":5400,"price":{"amount":"200","currency":"USD","formatted":"$200.00"}}],"displayOptions":{"useCustomerTimezone":false},"timezone":"UTC+0","availabilities":{"rules":[]}},
               session: null,
-              timezone: null
+              timezone: this.moment.tz.guess()
             }
           },
           components: {
