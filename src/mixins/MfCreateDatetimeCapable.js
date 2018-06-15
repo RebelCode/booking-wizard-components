@@ -24,21 +24,24 @@ export default function MfCreateDatetimeCapable (moment) {
             return moment.tz(value, timezone || 'UTC')
           }
         }
-      }
-    },
-    methods: {
+      },
+
       /**
-       * Create moment object in local timezone.
+       * Function for creating moment object in local timezone.
        *
-       * @param {moment|string|Date} value Datetime value that can be accepted by moment.
+       * @since [*next-version*]
        *
-       * @return {moment}
+       * @param {CreateLocalDatetimeFunction} createLocalDatetime
        */
-      createLocalDatetime (value = null) {
-        if (!value) {
-          value = moment()
+      createLocalDatetime: {
+        default () {
+          return  (value = null) => {
+            if (!value) {
+              value = moment()
+            }
+            return this.createDatetime(value, this.timezone)
+          }
         }
-        return this.createDatetime(value, this.timezone)
       },
     }
   }
