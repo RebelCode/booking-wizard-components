@@ -181,13 +181,17 @@
         return moment
       })
 
+      di.factory('CreateDatetimeCapable', function (container) {
+        return dependencies.bookingWizardComponents.MfCreateDatetimeCapable(container.moment)
+      })
+
       di.factory('service-session-selector', function (container) {
         console.info(dependencies)
-        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.moment, container.sessionApi, container.config.datetime)
+        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.CreateDatetimeCapable, container.sessionApi, container.config.datetime)
       })
 
       di.factory('session-picker', function (container) {
-        return dependencies.bookingWizardComponents.CfSessionPicker(container.moment, container.config.datetime)
+        return dependencies.bookingWizardComponents.CfSessionPicker(container.CreateDatetimeCapable, container.config.datetime)
       })
 
       di.factory('sessionApi', function (container) {

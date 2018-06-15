@@ -36,3 +36,20 @@
  * @param {string|Date} value Any value that should be used for creating date.
  * @param {string} timezone Timezone in which date should be created
  */
+
+/**
+ * Function for creating datetime in local timezone.
+ *
+ * @function CreateLocalDatetimeFunction
+ *
+ * @param {string|Date} value Any value that should be used for creating date.
+ */
+
+/**
+ * Provide ability to create datetime objects.
+ *
+ * @class CreateDatetimeCapable
+ *
+ * @method {CreateDatetimeFunction} createDatetime
+ * @method {CreateLocalDatetimeFunction} createLocalDatetime
+ */

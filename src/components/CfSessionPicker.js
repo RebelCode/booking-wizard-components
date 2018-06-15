@@ -3,7 +3,7 @@
  *
  * @since [*next-version*]
  *
- * @param {moment} moment MomentJS.
+ * @param {CreateDatetimeCapable} CreateDatetimeCapable Mixin that provides ability to work with datetime.
  * @param {{
  *  sessionTime: (string), // How to format session time,
  *  dayFull: (string), // How to format day for day heading,
@@ -12,9 +12,11 @@
  *
  * @return {object}
  */
-export default function CfSessionPicker (moment, dateFormats) {
+export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
   return {
     template: '#session-picker-template',
+
+    mixins: [ CreateDatetimeCapable ],
 
     inject: {
       /**
@@ -22,23 +24,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        *
        * @since [*next-version*]
        */
-      'humanizeDuration': 'humanizeDuration',
-
-      /**
-       * Function for creating moment instance in given timezone.
-       *
-       * @since [*next-version*]
-       *
-       * @property {CreateDatetimeFunction} createDatetime
-       */
-      createDatetime: {
-        from: 'createDatetime',
-        default () {
-          return (value, timezone) => {
-            return moment.tz(value, timezone || 'UTC')
-          }
-        }
-      }
+      'humanizeDuration': 'humanizeDuration'
     },
 
     data () {
@@ -224,20 +210,6 @@ export default function CfSessionPicker (moment, dateFormats) {
           && this.value.start === session.start
           && this.value.end === session.end
           && this.value.resource === session.resource
-      },
-
-      /**
-       * Create moment object in local timezone.
-       *
-       * @param {moment|string|Date} value Datetime value that can be accepted by moment.
-       *
-       * @return {moment}
-       */
-      createLocalDatetime (value = null) {
-        if (!value) {
-          value = moment()
-        }
-        return this.createDatetime(value, this.timezone)
       },
 
       /**

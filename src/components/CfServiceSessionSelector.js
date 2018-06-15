@@ -6,7 +6,7 @@
  *
  * @since [*next-version*]
  *
- * @param {moment} moment MomentJS.
+ * @param {CreateDatetimeCapable} CreateDatetimeCapable Mixin that provides ability to work with datetime.
  * @param {object} sessionsApi Session API wrapper, used for querying sessions.
  * @param {{
  *  dayKey: (string), // How to format day as a key,
@@ -16,9 +16,11 @@
  *
  * @return {object}
  */
-export default function CfServiceSessionSelector (moment, sessionsApi, dateFormats) {
+export default function CfServiceSessionSelector (CreateDatetimeCapable, sessionsApi, dateFormats) {
   return {
     template: '#service-session-selector-template',
+
+    mixins: [ CreateDatetimeCapable ],
 
     inject: {
       /**
@@ -40,23 +42,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        *
        * @since [*next-version*]
        */
-      'sessionReadTransformer': 'sessionReadTransformer',
-
-      /**
-       * Function for creating moment instance in given timezone.
-       *
-       * @since [*next-version*]
-       *
-       * @property {CreateDatetimeFunction} createDatetime
-       */
-      createDatetime: {
-        from: 'createDatetime',
-        default () {
-          return (value, timezone) => {
-            return moment.tz(value, timezone || 'UTC')
-          }
-        }
-      }
+      'sessionReadTransformer': 'sessionReadTransformer'
     },
     data () {
       return {
@@ -437,8 +423,8 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        */
       _prepareSessionRequestParams () {
         const currentDay = this.createLocalDatetime()
-        const firstDayOfMonth = moment(this.selectedMonth).startOf('month')
-        const lastDayOfMonth = moment(this.selectedMonth).endOf('month')
+        const firstDayOfMonth = this.createLocalDatetime(this.selectedMonth).startOf('month')
+        const lastDayOfMonth = this.createLocalDatetime(this.selectedMonth).endOf('month')
 
         const start = (currentDay.isAfter(firstDayOfMonth) ? currentDay : firstDayOfMonth).startOf('day').format()
         const end = lastDayOfMonth.endOf('day').format()
@@ -448,20 +434,6 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
           start,
           end
         }
-      },
-
-      /**
-       * Create moment object in local timezone.
-       *
-       * @param {moment|string|Date} value Datetime value that can be accepted by moment.
-       *
-       * @return {moment}
-       */
-      createLocalDatetime (value = null) {
-        if (!value) {
-          value = moment()
-        }
-        return this.createDatetime(value, this.timezone)
       },
 
       /**
