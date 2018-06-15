@@ -3,7 +3,7 @@
  *
  * @since [*next-version*]
  *
- * @param {moment} moment MomentJS.
+ * @param {CreateDatetimeCapable} CreateDatetimeCapable Mixin that provides ability to work with datetime.
  * @param {{
  *  sessionTime: (string), // How to format session time,
  *  dayFull: (string), // How to format day for day heading,
@@ -12,18 +12,20 @@
  *
  * @return {object}
  */
-export default function CfSessionPicker (moment, dateFormats) {
+export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
   return {
     template: '#session-picker-template',
 
-    inject: [
+    mixins: [ CreateDatetimeCapable ],
+
+    inject: {
       /**
        * Function for transforming duration in seconds to human readable format.
        *
        * @since [*next-version*]
        */
-      'humanizeDuration',
-    ],
+      'humanizeDuration': 'humanizeDuration'
+    },
 
     data () {
       return {
@@ -71,6 +73,15 @@ export default function CfSessionPicker (moment, dateFormats) {
         default () {
           return []
         }
+      },
+
+      /**
+       * @since [*next-version*]
+       *
+       * @property {string|null} timezone Name of timezone in which sessions will be displayed.
+       */
+      timezone: {
+        default: null
       },
 
       /**
@@ -140,7 +151,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDayLabel () {
-        return moment(this.selectedDay).format(dateFormats.dayFull)
+        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayFull)
       },
 
       /**
@@ -151,7 +162,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @property {string}
        */
       selectedDaySessionsLabel () {
-        return moment(this.selectedDay).format(dateFormats.dayShort)
+        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayShort)
       },
     },
 
@@ -182,7 +193,7 @@ export default function CfSessionPicker (moment, dateFormats) {
        * @return {*}
        */
       sessionLabel (session) {
-        return moment(session.start).format(dateFormats.sessionTime)
+        return this.createLocalDatetime(session.start).format(dateFormats.sessionTime)
       },
 
       /**

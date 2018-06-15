@@ -6,7 +6,7 @@
  *
  * @since [*next-version*]
  *
- * @param {moment} moment MomentJS.
+ * @param {CreateDatetimeCapable} CreateDatetimeCapable Mixin that provides ability to work with datetime.
  * @param {object} sessionsApi Session API wrapper, used for querying sessions.
  * @param {{
  *  dayKey: (string), // How to format day as a key,
@@ -16,32 +16,34 @@
  *
  * @return {object}
  */
-export default function CfServiceSessionSelector (moment, sessionsApi, dateFormats) {
+export default function CfServiceSessionSelector (CreateDatetimeCapable, sessionsApi, dateFormats) {
   return {
     template: '#service-session-selector-template',
 
-    inject: [
+    mixins: [ CreateDatetimeCapable ],
+
+    inject: {
       /**
        * Datepicker component, used for selecting month and day.
        *
        * @since [*next-version*]
        */
-      'datepicker',
+      'datepicker': 'datepicker',
 
       /**
        * Session length picker component, allows to select session.
        *
        * @since [*next-version*]
        */
-      'session-picker',
+      'session-picker': 'session-picker',
 
       /**
        * Session transformer for transforming sessions for interacting with them in the UI.
        *
        * @since [*next-version*]
        */
-      'sessionReadTransformer'
-    ],
+      'sessionReadTransformer': 'sessionReadTransformer'
+    },
     data () {
       return {
         /**
@@ -127,6 +129,15 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @property {object|null} service Selected service to choose sessions for.
        */
       service: {
+        default: null
+      },
+
+      /**
+       * @since [*next-version*]
+       *
+       * @property {string|null} timezone Name of timezone in which sessions will be displayed.
+       */
+      timezone: {
         default: null
       },
 
@@ -221,7 +232,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (availableDaysCount - 1 === selectedDayIndex) {
           return null
         }
-        return moment(this.availableDays[selectedDayIndex + 1]).format()
+        return this.createLocalDatetime(this.availableDays[selectedDayIndex + 1]).format()
       },
 
       /**
@@ -236,7 +247,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (selectedDayIndex === 0) {
           return null
         }
-        return moment(this.availableDays[selectedDayIndex - 1]).format()
+        return this.createLocalDatetime(this.availableDays[selectedDayIndex - 1]).format()
       },
 
       /**
@@ -258,7 +269,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @property {Date}
        */
       currentDay () {
-        return moment().startOf('day').toDate()
+        return this.createLocalDatetime().startOf('day').toDate()
       },
 
       /**
@@ -270,7 +281,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
         if (!this.value) {
           return null
         }
-        const sessionStart = moment(this.value.start)
+        const sessionStart = this.createLocalDatetime(this.value.start)
         return sessionStart.format(dateFormats.sessionTime) + ', ' + sessionStart.format(dateFormats.dayFull)
       }
     },
@@ -296,10 +307,10 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
       editSession () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
 
-        const sessionStart = moment(this.preloadedSession.start)
+        const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
-        this.selectedDay = moment(sessionStart).startOf('day').format()
-        this.selectedMonth = moment(sessionStart).startOf('month').format()
+        this.selectedDay = this.createLocalDatetime(sessionStart).startOf('day').format()
+        this.selectedMonth = this.createLocalDatetime(sessionStart).startOf('month').format()
 
         this.loadSessions().then(() => {
           this.isEditing = false
@@ -375,7 +386,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
       _setCleanStateValues () {
         this.selectedDay = null
 
-        this.selectedMonth = moment().toDate()
+        this.selectedMonth = this.createLocalDatetime().toDate()
         this.sessions = []
 
         this.$nextTick(() => {
@@ -411,9 +422,9 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @return {{service: Number, start: (string), end: (string)}}
        */
       _prepareSessionRequestParams () {
-        const currentDay = moment()
-        const firstDayOfMonth = moment(this.selectedMonth).startOf('month')
-        const lastDayOfMonth = moment(this.selectedMonth).endOf('month')
+        const currentDay = this.createLocalDatetime()
+        const firstDayOfMonth = this.createLocalDatetime(this.selectedMonth).startOf('month')
+        const lastDayOfMonth = this.createLocalDatetime(this.selectedMonth).endOf('month')
 
         const start = (currentDay.isAfter(firstDayOfMonth) ? currentDay : firstDayOfMonth).startOf('day').format()
         const end = lastDayOfMonth.endOf('day').format()
@@ -435,7 +446,7 @@ export default function CfServiceSessionSelector (moment, sessionsApi, dateForma
        * @return {string} Day key.
        */
       _getDayKey (value) {
-        return moment(value).format(dateFormats.dayKey)
+        return this.createLocalDatetime(value).format(dateFormats.dayKey)
       }
     },
     components: {

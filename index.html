@@ -9,8 +9,15 @@
     <app inline-template>
         <div>
             <div>Selected session: <code>{{ session }}</code></div>
+            <select v-model="timezone">
+                <option value="Pacific/Tahiti">Pacific/Tahiti</option>
+                <option value="Europe/Kiev">Europe/Kiev</option>
+                <option value="Europe/Minsk">Europe/Minsk</option>
+                <option value="America/Phoenix">America/Phoenix</option>
+            </select>
             <service-session-selector :service="service"
                                       v-model="session"
+                                      :timezone="timezone"
             ></service-session-selector>
         </div>
     </app>
@@ -53,6 +60,7 @@
                 <session-picker v-model="session"
                                 :selected-day.sync="selectedDay"
                                 :service="service"
+                                :timezone="timezone"
                                 :sessions="selectedDaySessions"
                                 :prev-available-day="prevAvailableDay"
                                 :next-available-day="nextAvailableDay"
@@ -119,12 +127,13 @@
         datepicker: 'https://cdn.jsdelivr.net/npm/vuejs-datepicker@0.9.26/dist/build.min',
         lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min',
         moment: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min',
+        'moment-timezone': 'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data-2012-2022.min',
         momentRange: 'https://cdnjs.cloudflare.com/ajax/libs/moment-range/4.0.1/moment-range',
       }
     })
 
     var dependenciesList = ['bookingWizardComponents','uiFramework', 'bottle', 'vue', 'axios', 'humanizeDuration', 'cjs!datepicker',
-      'moment', 'lodash', 'cjs!momentRange', 'stdLib']
+      'moment', 'moment-timezone', 'lodash', 'cjs!momentRange', 'stdLib']
 
     function defineServices (di, dependencies) {
       di.factory('vue', function () {
@@ -135,11 +144,12 @@
 
       di.factory('app', function () {
         return {
-          inject: ['service-session-selector'],
+          inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
-              service: {"id":29,"name":"simple","bookingsEnabled":"1","sessionLengths":[{"sessionLength":3600,"price":{"amount":"35","currency":"USD","formatted":"$35.00"}}],"displayOptions":{"useCustomerTimezone":false},"timezone":"UTC+0","availabilities":{"rules":[]}},
-              session: null
+              service: {"id":34,"name":"Yoga Crash","description":"","imageSrc":false,"bookingsEnabled":"1","sessionLengths":[{"sessionLength":2700,"price":{"amount":"100","currency":"USD","formatted":"$100.00"}},{"sessionLength":5400,"price":{"amount":"200","currency":"USD","formatted":"$200.00"}}],"displayOptions":{"useCustomerTimezone":false},"timezone":"UTC+0","availabilities":{"rules":[]}},
+              session: null,
+              timezone: this.moment.tz.guess()
             }
           },
           components: {
@@ -166,18 +176,22 @@
       })
 
       di.factory('moment', function (container) {
-        var moment = dependencies.moment
+        var moment = dependencies['moment-timezone']
         return dependencies.momentRange.extendMoment(moment)
         return moment
       })
 
+      di.factory('CreateDatetimeCapable', function (container) {
+        return dependencies.bookingWizardComponents.MfCreateDatetimeCapable(container.moment)
+      })
+
       di.factory('service-session-selector', function (container) {
         console.info(dependencies)
-        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.moment, container.sessionApi, container.config.datetime)
+        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.CreateDatetimeCapable, container.sessionApi, container.config.datetime)
       })
 
       di.factory('session-picker', function (container) {
-        return dependencies.bookingWizardComponents.CfSessionPicker(container.moment, container.config.datetime)
+        return dependencies.bookingWizardComponents.CfSessionPicker(container.CreateDatetimeCapable, container.config.datetime)
       })
 
       di.factory('sessionApi', function (container) {
