@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+## [0.1.3] - 2018-06-15
+### Added
+- Added ability to select timezone in which sessions will be shown.
 
 ## [0.1.2] - 2018-06-09
 ### Fixed
