@@ -106,8 +106,20 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
          */
         nextAvailableDay: null,
 
+        /**
+         * Session list for selected day
+         *
+         * @since [*next-version*]
+         *
+         * @property {BookingSession[]}
+         */
         selectedDaySessions: [],
 
+        /**
+         * @since [*next-version*]
+         *
+         * @property {object} sessionDuration Selected session duration
+         */
         sessionDuration: null,
       }
     },

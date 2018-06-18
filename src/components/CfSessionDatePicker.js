@@ -97,7 +97,14 @@ export default function (CreateDatetimeCapable, dateFormats) {
         default () {
           return []
         }
-      }
+      },
+
+      /**
+       * @since [*next-version*]
+       *
+       * @property {BookingSession[]} value Session list for selected day, `v-model` in parent
+       */
+      value: {},
     },
 
     watch: {
