@@ -7,7 +7,7 @@
  * @since [*next-version*]
  *
  * @param {CreateDatetimeCapable} CreateDatetimeCapable Mixin that provides ability to work with datetime.
- * @param {object} sessionsApi Session API wrapper, used for querying sessions.
+ * @param {SessionsApi} sessionsApi Session API wrapper, used for querying sessions.
  * @param {{
  *  dayKey: (string), // How to format day as a key,
  *  sessionTime: (string), // How to format session time,
@@ -24,18 +24,25 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
     inject: {
       /**
-       * Datepicker component, used for selecting month and day.
-       *
-       * @since [*next-version*]
-       */
-      'datepicker': 'datepicker',
-
-      /**
        * Session length picker component, allows to select session.
        *
        * @since [*next-version*]
        */
-      'session-picker': 'session-picker',
+      'session-time-picker': 'session-time-picker',
+
+      /**
+       * Date picker component, allows to select date of month.
+       *
+       * @since [*next-version*]
+       */
+      'session-date-picker': 'session-date-picker',
+
+      /**
+       * Session duration picker component, allows to select session duration.
+       *
+       * @since [*next-version*]
+       */
+      'session-duration-picker': 'session-duration-picker',
 
       /**
        * Session transformer for transforming sessions for interacting with them in the UI.
@@ -46,13 +53,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
     },
     data () {
       return {
-        /**
-         * @since [*next-version*]
-         *
-         * @property {String|null} selectedMonth Month that is selected in datepicker.
-         */
-        selectedMonth: null,
-
         /**
          * @since [*next-version*]
          *
@@ -86,7 +86,29 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
          *
          * @property {object} preloadedSession Session that was chosen when component was created.
          */
-        preloadedSession: null
+        preloadedSession: null,
+
+        /**
+         * The previous closest available day with sessions.
+         *
+         * @since [*next-version*]
+         *
+         * @property {string|null}
+         */
+        prevAvailableDay: null,
+
+        /**
+         * The next closest available day with sessions.
+         *
+         * @since [*next-version*]
+         *
+         * @property {string|null}
+         */
+        nextAvailableDay: null,
+
+        selectedDaySessions: [],
+
+        sessionDuration: null,
       }
     },
     /**
@@ -182,97 +204,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       },
 
       /**
-       * Computed property that maps days (string) to sessions (array of sessions).
-       *
-       * @since [*next-version*]
-       *
-       * @property {object} Map of dates and corresponding sessions for each of them.
-       */
-      daysWithSessions () {
-        let daysWithSessions = {}
-        const sessions = this._addPreloadedSession(this.sessions, this.preloadedSession)
-        for (let session of sessions) {
-          const dayKey = this._getDayKey(session.start)
-          if (!daysWithSessions[dayKey]) {
-            daysWithSessions[dayKey] = []
-          }
-          daysWithSessions[dayKey].push(session)
-        }
-        return daysWithSessions
-      },
-
-      /**
-       * Session list for selected day
-       *
-       * @since [*next-version*]
-       *
-       * @return {object[]}
-       */
-      selectedDaySessions () {
-        if (!this.selectedDay) {
-          return []
-        }
-        const selectedDaySessions = this.daysWithSessions[this._getDayKey(this.selectedDay)]
-        if (!selectedDaySessions) {
-          return []
-        }
-        return selectedDaySessions
-      },
-
-      /**
-       * The next closest available day with sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string|null}
-       */
-      nextAvailableDay () {
-        const selectedDayIndex = this.availableDays.indexOf(this._getDayKey(this.selectedDay))
-        const availableDaysCount = this.availableDays.length
-        if (availableDaysCount - 1 === selectedDayIndex) {
-          return null
-        }
-        return this.createLocalDatetime(this.availableDays[selectedDayIndex + 1]).format()
-      },
-
-      /**
-       * The previous closest available day with sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string|null}
-       */
-      prevAvailableDay () {
-        const selectedDayIndex = this.availableDays.indexOf(this._getDayKey(this.selectedDay))
-        if (selectedDayIndex === 0) {
-          return null
-        }
-        return this.createLocalDatetime(this.availableDays[selectedDayIndex - 1]).format()
-      },
-
-      /**
-       * List of available days with sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string[]}
-       */
-      availableDays () {
-        return Object.keys(this.daysWithSessions)
-      },
-
-      /**
-       * The current day to disable datepicker to it.
-       *
-       * @since [*next-version*]
-       *
-       * @property {Date}
-       */
-      currentDay () {
-        return this.createLocalDatetime().startOf('day').toDate()
-      },
-
-      /**
        * @since [*next-version*]
        *
        * @property {String} Label for describing selected session in human readable format.
@@ -286,18 +217,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       }
     },
     methods: {
-      /**
-       * Event listener, fired on month change.
-       *
-       * @since [*next-version*]
-       *
-       * @param {Date} newMonth Newly selected month.
-       */
-      onMonthChange (newMonth) {
-        this.selectedMonth = newMonth
-        this.loadSessions()
-      },
-
       /**
        * When the picker in the edit mode (so session is preloaded), this allows
        * to edit that session time.
@@ -349,33 +268,16 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        *
-       * @param {object} a First session to check
-       * @param {object} b Second session to check
+       * @param {BookingSession} a First session to check
+       * @param {BookingSession} b Second session to check
        *
        * @return {boolean}
        */
       _sessionsIsSame (a, b) {
         return a.service === b.service &&
           a.resource === b.resource &&
-          a.startUnix === b.startUnix &&
-          a.endUnix === b.endUnix
-      },
-
-      /**
-       * Check that given date is disabled in datepicker.
-       *
-       * @since [*next-version*]
-       *
-       * @param {Date} date Date in datepicker to check.
-       *
-       * @return {boolean} Is given date is disabled.
-       */
-      isDateDisabled (date) {
-        if (this.isSessionsLoading) {
-          return true
-        }
-        const dateKey = this._getDayKey(date)
-        return Object.keys(this.daysWithSessions).indexOf(dateKey) === -1
+          a.start === b.start &&
+          a.end === b.end
       },
 
       /**
@@ -406,7 +308,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       loadSessions () {
         this.isSessionsLoading = true
         return sessionsApi.fetch(this._prepareSessionRequestParams()).then(sessions => {
-          this.sessions = sessions
+          this.sessions = this._addPreloadedSession(sessions, this.preloadedSession)
           this.isSessionsLoading = false
         }, error => {
           console.error(error)
@@ -434,24 +336,12 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
           start,
           end
         }
-      },
-
-      /**
-       * Get day key for given datetime. It will be used as as key for sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @param {string|Date} value Value to get day key from.
-       *
-       * @return {string} Day key.
-       */
-      _getDayKey (value) {
-        return this.createLocalDatetime(value).format(dateFormats.dayKey)
       }
     },
     components: {
-      'datepicker': 'datepicker',
-      'session-picker': 'session-picker'
+      'session-time-picker': 'session-time-picker',
+      'session-duration-picker': 'session-duration-picker',
+      'session-date-picker': 'session-date-picker',
     }
   }
 }

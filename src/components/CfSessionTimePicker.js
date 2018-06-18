@@ -1,5 +1,5 @@
 /**
- * Component for selecting booking sessions with needed duration.
+ * Component for selecting booking sessions time with needed duration.
  *
  * @since [*next-version*]
  *
@@ -12,33 +12,20 @@
  *
  * @return {object}
  */
-export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
+export default function (CreateDatetimeCapable, dateFormats) {
   return {
-    template: '#session-picker-template',
+    template: '#session-time-picker-template',
 
     mixins: [ CreateDatetimeCapable ],
 
-    inject: {
-      /**
-       * Function for transforming duration in seconds to human readable format.
-       *
-       * @since [*next-version*]
-       */
-      'humanizeDuration': 'humanizeDuration'
-    },
-
-    data () {
-      return {
-        /**
-         * @since [*next-version*]
-         *
-         * @property {object|null} selectedSessionLength Selected session length object.
-         */
-        selectedSessionLength: null,
-      }
-    },
-
     props: {
+      /**
+       * @since [*next-version*]
+       *
+       * @property {object|null} value Selected session, `v-model` in parent
+       */
+      value: {},
+
       /**
        * @since [*next-version*]
        *
@@ -46,22 +33,6 @@ export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
        */
       selectedDay: {
         default: null
-      },
-
-      /**
-       * Waiting for this structure:
-       * {
-         *  `id`: Number, // service ID
-         *  `sessionLengths`: Array of {
-         *    `sessionLength`: Number // session duration in seconds
-         *  }
-         * }
-       * @since [*next-version*]
-       *
-       * @property {object|null} service Selected service to choose sessions for.
-       */
-      service: {
-        type: Object
       },
 
       /**
@@ -87,9 +58,9 @@ export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
-       * @property {object|null} value Selected session, `v-model` in parent
+       * @property {object|null} selectedSessionLength Selected session length object.
        */
-      value: {},
+      selectedSessionLength: null,
 
       /**
        * The previous closest available day with sessions.
@@ -112,21 +83,6 @@ export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
       nextAvailableDay: {
         default: null
       },
-    },
-
-    watch: {
-      /**
-       * Watch by `service` property change and, if it's changed, select first available
-       * session length. `immediate` option fire this watcher on component mount.
-       *
-       * @since [*next-version*]
-       */
-      service: {
-        immediate: true,
-        handler () {
-          this.selectedSessionLength = this.service.sessionLengths[0]
-        }
-      }
     },
 
     computed: {
@@ -167,22 +123,6 @@ export default function CfSessionPicker (CreateDatetimeCapable, dateFormats) {
     },
 
     methods: {
-      /**
-       * Get string representation of session duration.
-       *
-       * @since [*next-version*]
-       *
-       * @param {object} sessionLength Session length.
-       *
-       * @return {string} String representing duration, human readable.
-       */
-      sessionLengthLabel (sessionLength) {
-        return this.humanizeDuration(sessionLength.sessionLength * 1000, {
-          units: ['w', 'd', 'h', 'm'],
-          round: true
-        })
-      },
-
       /**
        * Session label for representing session in UI.
        *

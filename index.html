@@ -40,54 +40,68 @@
             <div class="description">Please select service to choose available session for booking.</div>
         </template>
         <template v-if="service && !isEditing">
-            <div class="form-row" v-if="!selectedDay">
-                <div class="form-row__label form-row__label--smaller">
-                    Month
-                    <span class="loading-inline" v-if="isSessionsLoading"></span>
-                </div>
-                <div class="form-row__input exclusions-datepicker">
-                    <datepicker v-model="selectedDay"
-                                :inline="true"
-                                @changedMonth="onMonthChange"
-                                :disabled="{ customPredictor: isDateDisabled, to: currentDay }"
-                                :open-date="selectedMonth"
-                                :class="['sessions-datepicker', isSessionsLoading ? 'disabled' : '']"
-                                maximum-view="day"
-                    ></datepicker>
-                </div>
+            <div v-if="isSessionsLoading">
+                <h1>LOADING...</h1>
             </div>
-            <div v-else>
-                <session-picker v-model="session"
+            <div>
+                <div><code>selected session duration: {{ sessionDuration }}</code></div>
+                <session-duration-picker
+                    v-model="sessionDuration"
+                    :service="service"
+                ></session-duration-picker>
+            </div>
+            <div>
+                <div>
+                    <code>{{ selectedDaySessions }}</code>
+                    <div><code>selected day in PARENT: {{ selectedDay }}</code></div>
+                </div>
+                <session-date-picker
+                    v-model="selectedDaySessions"
+                    :selected-day.sync="selectedDay"
+                    :session.sync="session"
+                    :loading="isSessionsLoading"
+                    :selected-session-length="sessionDuration"
+                    :available-sessions="sessions"
+                    :prev-available-day.sync="prevAvailableDay"
+                    :next-available-day.sync="nextAvailableDay"
+                    @changedMonth="loadSessions"
+                ></session-date-picker>
+            </div>
+            <div>
+                <session-time-picker v-model="session"
                                 :selected-day.sync="selectedDay"
+                                :selected-session-length="sessionDuration"
                                 :service="service"
                                 :timezone="timezone"
                                 :sessions="selectedDaySessions"
                                 :prev-available-day="prevAvailableDay"
                                 :next-available-day="nextAvailableDay"
-                ></session-picker>
+                ></session-time-picker>
                 selectedSessionLabel: {{ selectedSessionLabel }}
             </div>
         </template>
     </div>
 </script>
-<script type="text/x-template" id="session-picker-template">
+<script type="text/x-template" id="session-date-picker-template">
+    <div class="form-row">
+        <div><code>selected day in date: {{ selectedDay }}</code></div>
+        <div class="form-row__label form-row__label--smaller">
+            Month
+            <span class="loading-inline" v-if="loading"></span>
+        </div>
+        <div class="form-row__input exclusions-datepicker">
+            <datepicker v-model="selectedDayProxy"
+                        :inline="true"
+                        @changedMonth="onMonthChange"
+                        :disabled="{ customPredictor: isDateDisabled, to: currentDay }"
+                        class="sessions-datepicker"
+                        maximum-view="day"
+            ></datepicker>
+        </div>
+    </div>
+</script>
+<script type="text/x-template" id="session-time-picker-template">
     <div>
-        <div class="form-row">
-            <div class="form-row__label form-row__label--smaller">Date</div>
-            <div class="form-row__input" style="padding-top: 3px">
-                {{ selectedDayLabel }}  <a href="#" @click="unselectDay">Change</a>
-            </div>
-        </div>
-        <div class="form-row">
-            <div class="form-row__label form-row__label--smaller">Duration</div>
-            <div class="form-row__input">
-                <select v-model="selectedSessionLength" style="width: 100%">
-                    <option :value="sessionLength" v-for="sessionLength in service.sessionLengths">
-                        {{ sessionLengthLabel(sessionLength) }}
-                    </option>
-                </select>
-            </div>
-        </div>
         <div class="form-row">
             <div class="form-row__label form-row__label--smaller">Session</div>
             <div class="form-row__input">
@@ -107,6 +121,18 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</script>
+<script type="text/x-template" id="session-duration-picker-template">
+    <div class="form-row">
+        <div class="form-row__label form-row__label--smaller">Duration</div>
+        <div class="form-row__input">
+            <select v-model="valueProxy" style="width: 100%">
+                <option :value="sessionLength" v-for="sessionLength in service.sessionLengths">
+                    {{ sessionLengthLabel(sessionLength) }}
+                </option>
+            </select>
         </div>
     </div>
 </script>
@@ -132,7 +158,7 @@
       }
     })
 
-    var dependenciesList = ['bookingWizardComponents','uiFramework', 'bottle', 'vue', 'axios', 'humanizeDuration', 'cjs!datepicker',
+    var dependenciesList = ['bookingWizardComponents', 'uiFramework', 'bottle', 'vue', 'axios', 'humanizeDuration', 'cjs!datepicker',
       'moment', 'moment-timezone', 'lodash', 'cjs!momentRange', 'stdLib']
 
     function defineServices (di, dependencies) {
@@ -147,7 +173,20 @@
           inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
-              service: {"id":34,"name":"Yoga Crash","description":"","imageSrc":false,"bookingsEnabled":"1","sessionLengths":[{"sessionLength":2700,"price":{"amount":"100","currency":"USD","formatted":"$100.00"}},{"sessionLength":5400,"price":{"amount":"200","currency":"USD","formatted":"$200.00"}}],"displayOptions":{"useCustomerTimezone":false},"timezone":"UTC+0","availabilities":{"rules":[]}},
+              service: {
+                'id': 34,
+                'name': 'Yoga Crash',
+                'description': '',
+                'imageSrc': false,
+                'bookingsEnabled': '1',
+                'sessionLengths': [{
+                  'sessionLength': 86400,
+                  'price': {'amount': '100', 'currency': 'USD', 'formatted': '$100.00'}
+                }, {'sessionLength': 172800, 'price': {'amount': '200', 'currency': 'USD', 'formatted': '$200.00'}}],
+                'displayOptions': {'useCustomerTimezone': false},
+                'timezone': 'UTC+0',
+                'availabilities': {'rules': []}
+              },
               session: null,
               timezone: this.moment.tz.guess()
             }
@@ -190,8 +229,16 @@
         return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.CreateDatetimeCapable, container.sessionApi, container.config.datetime)
       })
 
-      di.factory('session-picker', function (container) {
-        return dependencies.bookingWizardComponents.CfSessionPicker(container.CreateDatetimeCapable, container.config.datetime)
+      di.factory('session-time-picker', function (container) {
+        return dependencies.bookingWizardComponents.CfSessionTimePicker(container.CreateDatetimeCapable, container.config.datetime)
+      })
+
+      di.factory('session-duration-picker', function (container) {
+        return dependencies.bookingWizardComponents.CfSessionDurationPicker()
+      })
+
+      di.factory('session-date-picker', function (container) {
+        return dependencies.bookingWizardComponents.CfSessionDatePicker(container.CreateDatetimeCapable, container.config.datetime)
       })
 
       di.factory('sessionApi', function (container) {
