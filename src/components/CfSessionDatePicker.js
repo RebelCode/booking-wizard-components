@@ -27,17 +27,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
       'datepicker': 'datepicker',
     },
 
-    data () {
-      return {
-        /**
-         * @since [*next-version*]
-         *
-         * @property {String|null} selectedMonth Month that is selected in datepicker.
-         */
-        selectedMonth: null,
-      }
-    },
-
     props: {
       /**
        * @since [*next-version*]
@@ -194,7 +183,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {Date} newMonth Newly selected month.
        */
       onMonthChange (newMonth) {
-        this.selectedMonth = newMonth
         this.$emit('changedMonth', newMonth)
       },
 

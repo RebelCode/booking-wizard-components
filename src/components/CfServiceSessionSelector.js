@@ -299,13 +299,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        */
       _setCleanStateValues () {
         this.selectedDay = null
-
-        this.selectedMonth = this.createLocalDatetime().toDate()
         this.sessions = []
 
         this.$nextTick(() => {
           if (this.service && !this.isEditing) {
-            this.loadSessions()
+            this.loadSessions(this.createLocalDatetime().toDate())
           }
         })
       },
@@ -317,9 +315,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @return {Promise<any>}
        */
-      loadSessions () {
+      loadSessions (month) {
         this.isSessionsLoading = true
-        return sessionsApi.fetch(this._prepareSessionRequestParams()).then(sessions => {
+        return sessionsApi.fetch(this._prepareSessionRequestParams(month)).then(sessions => {
           this.sessions = this._addPreloadedSession(sessions, this.preloadedSession)
           this.isSessionsLoading = false
         }, error => {
@@ -335,10 +333,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @return {{service: Number, start: (string), end: (string)}}
        */
-      _prepareSessionRequestParams () {
+      _prepareSessionRequestParams (month) {
         const currentDay = this.createLocalDatetime()
-        const firstDayOfMonth = this.createLocalDatetime(this.selectedMonth).startOf('month')
-        const lastDayOfMonth = this.createLocalDatetime(this.selectedMonth).endOf('month')
+
+        const firstDayOfMonth = this.createLocalDatetime(month).startOf('month')
+        const lastDayOfMonth = this.createLocalDatetime(month).endOf('month')
 
         const start = (currentDay.isAfter(firstDayOfMonth) ? currentDay : firstDayOfMonth).startOf('day').format()
         const end = lastDayOfMonth.endOf('day').format()
