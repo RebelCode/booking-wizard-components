@@ -38,6 +38,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
       },
 
       /**
+       * @since [*next-version*]
+       *
+       * @property {BookingSession|null} session Selected session, sync with parent
+       */
+      session: {
+        default: null
+      },
+
+      /**
        * The previous closest available day with sessions.
        *
        * @since [*next-version*]
@@ -96,21 +105,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
       value: {},
     },
 
-    watch: {
-      /**
-       * Update sync properties once selected day is changed.
-       *
-       * @since [*next-version*]
-       *
-       * @param value
-       */
-      selectedDay (value) {
-        this.$emit('input', this.getSessionsForDay(value))
-        this.$emit('update:nextAvailableDay', this.getNextAvailableDay(value))
-        this.$emit('update:prevAvailableDay', this.getPrevAvailableDay(value))
-      }
-    },
-
     computed: {
       /**
        * Proxy for component's model field.
@@ -148,6 +142,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
           }
           daysWithSessions[dayKey].push(session)
         }
+
         return daysWithSessions
       },
 
@@ -172,9 +167,74 @@ export default function (CreateDatetimeCapable, dateFormats) {
       currentDay () {
         return this.createLocalDatetime().startOf('day').toDate()
       },
+
+      /**
+       * Days of selected session.
+       *
+       * @since [*next-version*]
+       *
+       * @property {Date[]}
+       */
+      sessionDays () {
+        if (this.lessThenDayDuration() || !this.session) {
+          return []
+        }
+        let days = []
+        for (let m = this.createLocalDatetime(this.session.start); m.isBefore(this.createLocalDatetime(this.session.end)); m.add(1, 'days')) {
+          days.push(m.toDate())
+        }
+        return days
+      }
+    },
+
+    watch: {
+      /**
+       * Update sync properties once selected day is changed.
+       *
+       * @since [*next-version*]
+       *
+       * @param value
+       */
+      selectedDay (value) {
+        const selectedDaySessions = this.getSessionsForDay(value)
+
+        this.$emit('input', selectedDaySessions)
+        this.$emit('update:nextAvailableDay', this.getNextAvailableDay(value))
+        this.$emit('update:prevAvailableDay', this.getPrevAvailableDay(value))
+
+        /*
+         * Try to preselect session, if selected duration is longer than 1 day
+         */
+        this.tryToSelectDailySession(selectedDaySessions)
+      }
     },
 
     methods: {
+      /**
+       * Try to preselect session, if selected duration is longer than 1 day
+       *
+       * @since [*next-version*]
+       *
+       * @param {BookingSession[]} sessions List of sessions.
+       */
+      tryToSelectDailySession (sessions) {
+        if (sessions.length !== 1 || this.lessThenDayDuration()) {
+          return
+        }
+        this.$emit('update:session', sessions[0])
+      },
+
+      /**
+       * Is selected duration less then day
+       *
+       * @since [*next-version*]
+       *
+       * @return {boolean}
+       */
+      lessThenDayDuration () {
+        return this.selectedSessionLength < 86400
+      },
+
       /**
        * Event listener, fired on month change.
        *

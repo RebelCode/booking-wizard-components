@@ -5,6 +5,11 @@
     <title>Wizard Components</title>
 </head>
 <body>
+<style>
+    .vdp-datepicker__calendar .cell.highlighted {
+        background: #4bd;
+    }
+</style>
 <div id="app">
     <app inline-template>
         <div>
@@ -93,7 +98,8 @@
             <datepicker v-model="selectedDayProxy"
                         :inline="true"
                         @changedMonth="onMonthChange"
-                        :disabled="{ customPredictor: isDateDisabled, to: currentDay }"
+                        :disabledDates="{ customPredictor: isDateDisabled, to: currentDay }"
+                        :highlighted="{ dates: sessionDays, includeDisabled: true }"
                         class="sessions-datepicker"
                         maximum-view="day"
             ></datepicker>
@@ -150,7 +156,7 @@
         axios: 'https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min',
         humanizeDuration: 'https://cdnjs.cloudflare.com/ajax/libs/humanize-duration/3.14.0/humanize-duration.min',
         uiFramework: 'https://unpkg.com/@rebelcode/ui-framework@0.1.1/dist/static/js/uiFramework',
-        datepicker: 'https://cdn.jsdelivr.net/npm/vuejs-datepicker@0.9.26/dist/build.min',
+        datepicker: 'https://cdn.jsdelivr.net/npm/vuejs-datepicker@1.4.0/dist/vuejs-datepicker.min',
         lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min',
         moment: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min',
         'moment-timezone': 'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data-2012-2022.min',
