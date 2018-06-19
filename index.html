@@ -98,7 +98,7 @@
             <datepicker v-model="selectedDayProxy"
                         :inline="true"
                         @changedMonth="onMonthChange"
-                        :disabledDates="{ customPredictor: isDateDisabled, to: currentDay }"
+                        :disabled="{ customPredictor: isDateDisabled, to: currentDay }"
                         :highlighted="{ dates: sessionDays, includeDisabled: true }"
                         class="sessions-datepicker"
                         maximum-view="day"
@@ -156,7 +156,7 @@
         axios: 'https://cdn.jsdelivr.net/npm/axios@0.18.0/dist/axios.min',
         humanizeDuration: 'https://cdnjs.cloudflare.com/ajax/libs/humanize-duration/3.14.0/humanize-duration.min',
         uiFramework: 'https://unpkg.com/@rebelcode/ui-framework@0.1.1/dist/static/js/uiFramework',
-        datepicker: 'https://cdn.jsdelivr.net/npm/vuejs-datepicker@1.4.0/dist/vuejs-datepicker.min',
+        datepicker: 'https://cdn.jsdelivr.net/npm/vuejs-datepicker@0.9.26/dist/build.min',
         lodash: 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min',
         moment: 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min',
         'moment-timezone': 'https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.17/moment-timezone-with-data-2012-2022.min',

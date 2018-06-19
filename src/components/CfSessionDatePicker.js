@@ -136,11 +136,21 @@ export default function (CreateDatetimeCapable, dateFormats) {
           .filter(session => session.duration === this.selectedSessionLength.sessionLength)
 
         for (let session of sessions) {
-          const dayKey = this._getDayKey(session.start)
-          if (!daysWithSessions[dayKey]) {
-            daysWithSessions[dayKey] = []
+          const sessionDays = this._getSessionDays(session)
+
+          for (let sessionDay of sessionDays) {
+            let sessionDayKey = this._getDayKey(sessionDay)
+            if (!daysWithSessions[sessionDayKey]) {
+              daysWithSessions[sessionDayKey] = []
+            }
+
+            if (this.lessThenDayDuration()) {
+              daysWithSessions[sessionDayKey].push(session)
+            }
+            else {
+              daysWithSessions[sessionDayKey] = [session]
+            }
           }
-          daysWithSessions[dayKey].push(session)
         }
 
         return daysWithSessions
@@ -179,12 +189,8 @@ export default function (CreateDatetimeCapable, dateFormats) {
         if (this.lessThenDayDuration() || !this.session) {
           return []
         }
-        let days = []
-        for (let m = this.createLocalDatetime(this.session.start); m.isBefore(this.createLocalDatetime(this.session.end)); m.add(1, 'days')) {
-          days.push(m.toDate())
-        }
-        return days
-      }
+        return this._getSessionDays(this.session)
+      },
     },
 
     watch: {
@@ -313,6 +319,23 @@ export default function (CreateDatetimeCapable, dateFormats) {
         }
         const dateKey = this._getDayKey(date)
         return Object.keys(this.daysWithSessions).indexOf(dateKey) === -1
+      },
+
+      /**
+       * Get days of given session.
+       *
+       * @since [*next-version*]
+       *
+       * @param {BookingSession} session Booking session for getting days.
+       *
+       * @return {Date[]} List of days of given session.
+       */
+      _getSessionDays (session) {
+        let days = []
+        for (let m = this.createLocalDatetime(session.start); m.isBefore(this.createLocalDatetime(session.end)); m.add(1, 'days')) {
+          days.push(m.toDate())
+        }
+        return days
       },
 
       /**
