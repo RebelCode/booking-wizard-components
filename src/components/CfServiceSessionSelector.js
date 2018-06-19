@@ -123,18 +123,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         sessionDuration: null,
       }
     },
-    /**
-     * Hook that would be triggered when component is created. Here
-     * we are checking if value is already set, and if so we are in the
-     * edit mode.
-     *
-     * @since [*next-version*]
-     */
-    created () {
-      if (this.value) {
-        this.isEditing = true
-      }
-    },
     watch: {
       /**
        * Watch by `service` property change and, if it's changed, refresh all selected values.
@@ -145,7 +133,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       service: {
         immediate: true,
         handler () {
-          this._setCleanStateValues()
+          this.$nextTick(this._setCleanStateValues)
         }
       }
     },
@@ -242,6 +230,19 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         return this.sessionDuration.sessionLength >= 86400
       }
     },
+    /**
+     * Hook that would be triggered when component is created. Here
+     * we are checking if value is already set, and if so we are in the
+     * edit mode.
+     *
+     * @since [*next-version*]
+     */
+    created () {
+      if (this.value) {
+        this.isEditing = true
+        this.editSession()
+      }
+    },
     methods: {
       /**
        * When the picker in the edit mode (so session is preloaded), this allows
@@ -250,12 +251,17 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       editSession () {
+        this.isSessionsLoading = true
+
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
-
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
-        this.selectedDay = this.createLocalDatetime(sessionStart).startOf('day').format()
 
-        this.loadSessions().then(() => {
+        this.selectedDay = sessionStart.toDate()
+        this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
+          return sessionLength.sessionLength === this.preloadedSession.duration
+        })
+
+        this.loadSessions(sessionStart).then(() => {
           this.isEditing = false
         })
       },
@@ -310,11 +316,15 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
+        if (this.isEditing) {
+          return
+        }
+
         this.selectedDay = null
         this.sessions = []
 
         this.$nextTick(() => {
-          if (this.service && !this.isEditing) {
+          if (this.service) {
             this.loadSessions(this.createLocalDatetime().toDate())
           }
         })

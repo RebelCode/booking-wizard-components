@@ -71,7 +71,9 @@ export default function () {
       service: {
         immediate: true,
         handler () {
-          this.valueProxy = this.service.sessionLengths[0]
+          if (!this.valueProxy) {
+            this.valueProxy = this.service.sessionLengths[0]
+          }
         }
       }
     },

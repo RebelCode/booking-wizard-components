@@ -27,6 +27,19 @@ export default function (CreateDatetimeCapable, dateFormats) {
       'datepicker': 'datepicker',
     },
 
+    data () {
+      return {
+        /**
+         * Day on which datepicker is opened
+         *
+         * @since [*next-version*]
+         *
+         * @var {Date|null}
+         */
+        openedOnDay: null
+      }
+    },
+
     props: {
       /**
        * @since [*next-version*]
@@ -211,6 +224,13 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param value
        */
       selectedDay (value) {
+        /*
+         * Store position (month) of datepicker.
+         */
+        if (value) {
+          this.openedOnDay = value
+        }
+
         const selectedDaySessions = this.getSessionsForDay(value)
 
         this.$emit('input', selectedDaySessions)
@@ -231,10 +251,27 @@ export default function (CreateDatetimeCapable, dateFormats) {
       selectedSessionLength: {
         deep: true,
         handler () {
-          this.$emit('update:session', null)
-          this.$emit('update:selectedDay', null)
+          if (!this.loading) {
+            this.$emit('update:session', null)
+            this.$emit('update:selectedDay', null)
+          }
         }
-      }
+      },
+
+      /**
+       * If availableSessions is just loaded but day is already selected,
+       * emit selection day event again to fulfill data.
+       *
+       * @since [*next-version*]
+       */
+      availableSessions: {
+        deep: true,
+        handler (newValue, oldValue) {
+          if (oldValue.length === 0 && this.selectedDay) {
+            this.$emit('update:selectedDay', new Date(this.selectedDay))
+          }
+        }
+      },
     },
 
     methods: {
