@@ -62,6 +62,7 @@
                 </div>
                 <session-date-picker
                     v-model="selectedDaySessions"
+                    :daily-duration="isDailyDuration"
                     :selected-day.sync="selectedDay"
                     :session.sync="session"
                     :loading="isSessionsLoading"
@@ -72,7 +73,7 @@
                     @changedMonth="loadSessions"
                 ></session-date-picker>
             </div>
-            <div>
+            <div v-if="!isDailyDuration">
                 <session-time-picker v-model="session"
                                 :selected-day.sync="selectedDay"
                                 :selected-session-length="sessionDuration"

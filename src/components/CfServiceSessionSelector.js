@@ -226,6 +226,20 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         }
         const sessionStart = this.createLocalDatetime(this.value.start)
         return sessionStart.format(dateFormats.sessionTime) + ', ' + sessionStart.format(dateFormats.dayFull)
+      },
+
+      /**
+       * Is selected duration more or equal to day
+       *
+       * @since [*next-version*]
+       *
+       * @return {boolean}
+       */
+      isDailyDuration () {
+        if (!this.sessionDuration) {
+          return false
+        }
+        return this.sessionDuration.sessionLength >= 86400
       }
     },
     methods: {
@@ -239,9 +253,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
 
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
-
         this.selectedDay = this.createLocalDatetime(sessionStart).startOf('day').format()
-        this.selectedMonth = this.createLocalDatetime(sessionStart).startOf('month').format()
 
         this.loadSessions().then(() => {
           this.isEditing = false

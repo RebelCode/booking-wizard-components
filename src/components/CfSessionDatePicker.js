@@ -71,6 +71,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
+       * @property {boolean} dailyDuration Is selected duration should enable daily select mode in dates.
+       */
+      dailyDuration: {
+        default: false
+      },
+
+      /**
+       * @since [*next-version*]
+       *
        * @property {Boolean} loading Is sessions information for month are loading right now.
        */
       loading: {
@@ -144,11 +153,11 @@ export default function (CreateDatetimeCapable, dateFormats) {
               daysWithSessions[sessionDayKey] = []
             }
 
-            if (this.lessThenDayDuration()) {
-              daysWithSessions[sessionDayKey].push(session)
+            if (this.dailyDuration) {
+              daysWithSessions[sessionDayKey] = [session]
             }
             else {
-              daysWithSessions[sessionDayKey] = [session]
+              daysWithSessions[sessionDayKey].push(session)
             }
           }
         }
@@ -186,7 +195,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @property {Date[]}
        */
       sessionDays () {
-        if (this.lessThenDayDuration() || !this.session) {
+        if (!this.dailyDuration || !this.session) {
           return []
         }
         return this._getSessionDays(this.session)
@@ -212,6 +221,21 @@ export default function (CreateDatetimeCapable, dateFormats) {
          * Try to preselect session, if selected duration is longer than 1 day
          */
         this.tryToSelectDailySession(selectedDaySessions)
+      },
+
+      /**
+       * Watch for duration change and if duration is daily, unselect session.
+       *
+       * @since [*next-version*]
+       */
+      selectedSessionLength: {
+        deep: true,
+        handler () {
+          if (this.dailyDuration) {
+            this.$emit('update:session', null)
+            this.$emit('update:selectedDay', null)
+          }
+        }
       }
     },
 
@@ -224,21 +248,10 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {BookingSession[]} sessions List of sessions.
        */
       tryToSelectDailySession (sessions) {
-        if (sessions.length !== 1 || this.lessThenDayDuration()) {
+        if (sessions.length !== 1 || !this.dailyDuration) {
           return
         }
         this.$emit('update:session', sessions[0])
-      },
-
-      /**
-       * Is selected duration less then day
-       *
-       * @since [*next-version*]
-       *
-       * @return {boolean}
-       */
-      lessThenDayDuration () {
-        return this.selectedSessionLength < 86400
       },
 
       /**
