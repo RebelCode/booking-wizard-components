@@ -224,17 +224,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
       },
 
       /**
-       * Watch for duration change and if duration is daily, unselect session.
+       * Unselect day and session when duration is changed.
        *
        * @since [*next-version*]
        */
       selectedSessionLength: {
         deep: true,
         handler () {
-          if (this.dailyDuration) {
-            this.$emit('update:session', null)
-            this.$emit('update:selectedDay', null)
-          }
+          this.$emit('update:session', null)
+          this.$emit('update:selectedDay', null)
         }
       }
     },

@@ -56,10 +56,6 @@
                 ></session-duration-picker>
             </div>
             <div>
-                <div>
-                    <code>{{ selectedDaySessions }}</code>
-                    <div><code>selected day in PARENT: {{ selectedDay }}</code></div>
-                </div>
                 <session-date-picker
                     v-model="selectedDaySessions"
                     :daily-duration="isDailyDuration"
@@ -187,9 +183,12 @@
                 'imageSrc': false,
                 'bookingsEnabled': '1',
                 'sessionLengths': [{
-                  'sessionLength': 86400,
+                  'sessionLength': 1800,
                   'price': {'amount': '100', 'currency': 'USD', 'formatted': '$100.00'}
-                }, {'sessionLength': 172800, 'price': {'amount': '200', 'currency': 'USD', 'formatted': '$200.00'}}],
+                }, {
+                  'sessionLength': 3600,
+                  'price': {'amount': '200', 'currency': 'USD', 'formatted': '$200.00'}
+                }, {'sessionLength': 14400, 'price': {'amount': '500', 'currency': 'USD', 'formatted': '$500.00'}}],
                 'displayOptions': {'useCustomerTimezone': false},
                 'timezone': 'UTC+0',
                 'availabilities': {'rules': []}
