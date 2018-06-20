@@ -27,16 +27,9 @@ export default function () {
       value: {},
 
       /**
-       * Waiting for this structure:
-       * {
-         *  `id`: Number, // service ID
-         *  `sessionLengths`: Array of {
-         *    `sessionLength`: Number // session duration in seconds
-         *  }
-         * }
        * @since [*next-version*]
        *
-       * @property {object|null} service Selected service to choose sessions for.
+       * @property {BookableService|null} service Selected service to choose sessions for.
        */
       service: {
         type: Object

@@ -30,13 +30,13 @@ export default function (CreateDatetimeCapable, dateFormats) {
     data () {
       return {
         /**
-         * Day on which datepicker is opened
+         * Date on which datepicker is opened
          *
          * @since [*next-version*]
          *
          * @var {Date|null}
          */
-        openedOnDay: null
+        openedOnDate: null
       }
     },
 
@@ -84,9 +84,9 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
-       * @property {boolean} dailyDuration Is selected duration should enable daily select mode in dates.
+       * @property {boolean} isDailyDuration Is selected session duration is longer than 1 day.
        */
-      dailyDuration: {
+      isDailyDuration: {
         default: false
       },
 
@@ -166,7 +166,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
               daysWithSessions[sessionDayKey] = []
             }
 
-            if (this.dailyDuration) {
+            if (this.isDailyDuration) {
               daysWithSessions[sessionDayKey] = [session]
             }
             else {
@@ -190,13 +190,13 @@ export default function (CreateDatetimeCapable, dateFormats) {
       },
 
       /**
-       * The current day to disable datepicker to it.
+       * The date object, that represents today.
        *
        * @since [*next-version*]
        *
        * @property {Date}
        */
-      currentDay () {
+      today () {
         return this.createLocalDatetime().startOf('day').toDate()
       },
 
@@ -208,7 +208,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @property {Date[]}
        */
       sessionDays () {
-        if (!this.dailyDuration || !this.session) {
+        if (!this.isDailyDuration || !this.session) {
           return []
         }
         return this._getSessionDays(this.session)
@@ -221,14 +221,14 @@ export default function (CreateDatetimeCapable, dateFormats) {
        *
        * @since [*next-version*]
        *
-       * @param value
+       * @param {Date} value Selected date.
        */
       selectedDay (value) {
         /*
          * Store position (month) of datepicker.
          */
         if (value) {
-          this.openedOnDay = value
+          this.openedOnDate = value
         }
 
         const selectedDaySessions = this.getSessionsForDay(value)
@@ -236,11 +236,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
         this.$emit('input', selectedDaySessions)
         this.$emit('update:nextAvailableDay', this.getNextAvailableDay(value))
         this.$emit('update:prevAvailableDay', this.getPrevAvailableDay(value))
-
-        /*
-         * Try to preselect session, if selected duration is longer than 1 day
-         */
-        this.tryToSelectDailySession(selectedDaySessions)
       },
 
       /**
@@ -276,20 +271,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
 
     methods: {
       /**
-       * Try to preselect session, if selected duration is longer than 1 day
-       *
-       * @since [*next-version*]
-       *
-       * @param {BookingSession[]} sessions List of sessions.
-       */
-      tryToSelectDailySession (sessions) {
-        if (sessions.length !== 1 || !this.dailyDuration) {
-          return
-        }
-        this.$emit('update:session', sessions[0])
-      },
-
-      /**
        * Event listener, fired on month change.
        *
        * @since [*next-version*]
@@ -297,13 +278,16 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {Date} newMonth Newly selected month.
        */
       onMonthChange (newMonth) {
+        this.openedOnDate = newMonth
         this.$emit('changedMonth', newMonth)
       },
 
       /**
-       * Session list for selected day
+       * Sessions list for selected day.
        *
        * @since [*next-version*]
+       *
+       * @param {Date|string} day Day to get sessions for.
        *
        * @return {object[]}
        */

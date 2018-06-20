@@ -135,20 +135,27 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         handler () {
           this.$nextTick(this._setCleanStateValues)
         }
+      },
+
+      /**
+       * Watch for selected sessions change, and if selected session duration is 1 day or more,
+       * and day have only one session, select that session.
+       *
+       * @since [*next-version*]
+       *
+       * @param {BookingSession[]} sessions List of sessions for selected day.
+       */
+      selectedDaySessions (sessions) {
+        if (this.isDailyDuration && sessions.length === 1) {
+          this.session = sessions[0]
+        }
       }
     },
     props: {
       /**
-       * Waiting for this structure:
-       * {
-             *  `id`: Number, // service ID
-             *  `sessionLengths`: Array of {
-             *    `sessionLength`: Number // session duration in seconds
-             *  }
-             * }
        * @since [*next-version*]
        *
-       * @property {object|null} service Selected service to choose sessions for.
+       * @property {BookableService|null} service Selected service to choose sessions for.
        */
       service: {
         default: null
@@ -217,7 +224,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       },
 
       /**
-       * Is selected duration more or equal to day
+       * Is selected session duration more or equal to day.
        *
        * @since [*next-version*]
        *

@@ -48,7 +48,7 @@
             <div>
                 <session-date-picker
                     v-model="selectedDaySessions"
-                    :daily-duration="isDailyDuration"
+                    :is-daily-duration="isDailyDuration"
                     :selected-day.sync="selectedDay"
                     :session.sync="session"
                     :loading="isSessionsLoading"
@@ -85,8 +85,8 @@
             <datepicker v-model="selectedDayProxy"
                         :inline="true"
                         @changedMonth="onMonthChange"
-                        :open-date="openedOnDay"
-                        :disabled="{ customPredictor: isDateDisabled, to: currentDay }"
+                        :open-date="openedOnDate"
+                        :disabled="{ customPredictor: isDateDisabled, to: today }"
                         :highlighted="{ dates: sessionDays, includeDisabled: true }"
                         class="sessions-datepicker"
                         maximum-view="day"
