@@ -61,28 +61,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @property {object|null} selectedSessionLength Selected session length object.
        */
       selectedSessionLength: null,
-
-      /**
-       * The previous closest available day with sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string|null}
-       */
-      prevAvailableDay: {
-        default: null
-      },
-
-      /**
-       * The next closest available day with sessions.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string|null}
-       */
-      nextAvailableDay: {
-        default: null
-      },
     },
 
     computed: {
@@ -97,28 +75,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
         return this.sessions.filter((session) => {
           return session.duration === this.selectedSessionLength.sessionLength
         })
-      },
-
-      /**
-       * Formatted day label for selected day row.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string}
-       */
-      selectedDayLabel () {
-        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayFull)
-      },
-
-      /**
-       * Formatted day label for session selection row.
-       *
-       * @since [*next-version*]
-       *
-       * @property {string}
-       */
-      selectedDaySessionsLabel () {
-        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayShort)
       },
     },
 
@@ -161,33 +117,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
        */
       select (session) {
         this.$emit('input', session)
-      },
-
-      /**
-       * Navigate to the nearest previous day with available sessions.
-       *
-       * @since [*next-version*]
-       */
-      goToPrevDay () {
-        this.$emit('update:selectedDay', this.prevAvailableDay)
-      },
-
-      /**
-       * Navigate to the nearest next day with available sessions.
-       *
-       * @since [*next-version*]
-       */
-      goToNextDay () {
-        this.$emit('update:selectedDay', this.nextAvailableDay)
-      },
-
-      /**
-       * Remove selected day value.
-       *
-       * @since [*next-version*]
-       */
-      unselectDay () {
-        this.$emit('update:selectedDay', null)
       }
     }
   }

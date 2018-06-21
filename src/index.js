@@ -4,6 +4,7 @@ import CfServiceSessionSelector from './components/CfServiceSessionSelector'
 import CfSessionTimePicker from './components/CfSessionTimePicker'
 import CfSessionDurationPicker from './components/CfSessionDurationPicker'
 import CfSessionDatePicker from './components/CfSessionDatePicker'
+import CfDateNavigator from './components/CfDateNavigator'
 import SessionReadTransformer from './transformer/SessionReadTransformer'
 import MfCreateDatetimeCapable from './mixins/MfCreateDatetimeCapable'
 
@@ -15,5 +16,6 @@ export {
   CfSessionTimePicker,
   CfSessionDurationPicker,
   CfSessionDatePicker,
+  CfDateNavigator,
   MfCreateDatetimeCapable
 }

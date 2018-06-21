@@ -60,15 +60,26 @@
                 ></session-date-picker>
             </div>
             <div v-if="!isDailyDuration">
-                <session-time-picker v-model="session"
-                                :selected-day.sync="selectedDay"
-                                :selected-session-length="sessionDuration"
-                                :service="service"
-                                :timezone="timezone"
-                                :sessions="selectedDaySessions"
-                                :prev-available-day="prevAvailableDay"
-                                :next-available-day="nextAvailableDay"
-                ></session-time-picker>
+                <div class="form-row">
+                    <div class="form-row__label form-row__label--smaller">Session</div>
+                    <div class="form-row__input">
+                        <div class="session-picker">
+                            <date-navigator
+                                    :selected-day.sync="selectedDay"
+                                    :timezone="timezone"
+                                    :prev-available-day="prevAvailableDay"
+                                    :next-available-day="nextAvailableDay"
+                            ></date-navigator>
+                            <session-time-picker
+                                    :selected-day.sync="selectedDay"
+                                    :selected-session-length="sessionDuration"
+                                    :service="service"
+                                    :timezone="timezone"
+                                    :sessions="selectedDaySessions"
+                            ></session-time-picker>
+                        </div>
+                    </div>
+                </div>
                 selectedSessionLabel: {{ selectedSessionLabel }}
             </div>
         </template>
@@ -95,27 +106,20 @@
     </div>
 </script>
 <script type="text/x-template" id="session-time-picker-template">
-    <div>
-        <div class="form-row">
-            <div class="form-row__label form-row__label--smaller">Session</div>
-            <div class="form-row__input">
-                <div class="session-picker">
-                    <div class="session-picker-header">
-                        <button :disabled="prevAvailableDay ? false : 'disabled'" @click="goToPrevDay">Prev</button>
-                        <span>{{ selectedDaySessionsLabel }}</span>
-                        <button :disabled="nextAvailableDay ? false : 'disabled'" @click="goToNextDay">Next</button>
-                    </div>
-                    <div class="session-picker-buttons">
-                        <div v-for="session in visibleSessions"
-                             @click="select(session)"
-                             :class="['session-picker-button', isSelected(session) ? 'session-picker-button--selected' : '']"
-                        >
-                            {{ sessionLabel(session) }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="session-picker-buttons">
+        <div v-for="session in visibleSessions"
+             @click="select(session)"
+             :class="['session-picker-button', isSelected(session) ? 'session-picker-button--selected' : '']"
+        >
+            {{ sessionLabel(session) }}
         </div>
+    </div>
+</script>
+<script type="text/x-template" id="date-navigator-template">
+    <div class="session-picker-header">
+        <button :disabled="prevAvailableDay ? false : 'disabled'" @click="goToPrevDay">Prev</button>
+        <span>{{ selectedDaySessionsLabel }}</span>
+        <button :disabled="nextAvailableDay ? false : 'disabled'" @click="goToNextDay">Next</button>
     </div>
 </script>
 <script type="text/x-template" id="session-duration-picker-template">
@@ -197,7 +201,8 @@
           app: container.app,
           'service-session-selector': container['service-session-selector'],
           'session-picker': container['session-picker'],
-          datepicker: container.datepicker
+          datepicker: container.datepicker,
+          'date-navigator': container['date-navigator']
         }
       })
 
@@ -226,6 +231,10 @@
 
       di.factory('session-time-picker', function (container) {
         return dependencies.bookingWizardComponents.CfSessionTimePicker(container.CreateDatetimeCapable, container.config.datetime)
+      })
+
+      di.factory('date-navigator', function (container) {
+        return dependencies.bookingWizardComponents.CfDateNavigator(container.CreateDatetimeCapable, container.config.datetime)
       })
 
       di.factory('session-duration-picker', function (container) {
@@ -299,7 +308,6 @@
       app.init()
     })
   })
-
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.js"></script>
 </body>

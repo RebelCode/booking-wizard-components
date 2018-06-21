@@ -45,6 +45,13 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       'session-duration-picker': 'session-duration-picker',
 
       /**
+       * Date navigation component, for switching between days.
+       *
+       * @since [*next-version*]
+       */
+      'date-navigator': 'date-navigator',
+
+      /**
        * Session transformer for transforming sessions for interacting with them in the UI.
        *
        * @since [*next-version*]
@@ -382,6 +389,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       'session-time-picker': 'session-time-picker',
       'session-duration-picker': 'session-duration-picker',
       'session-date-picker': 'session-date-picker',
+      'date-navigator': 'date-navigator'
     }
   }
 }
