@@ -345,9 +345,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       },
 
       /**
-       * Load sessions from API.
+       * Load sessions from API for given month.
        *
        * @since [*next-version*]
+       *
+       * @param {Date} month Month for which sessions should be loaded.
        *
        * @return {Promise<any>}
        */
@@ -363,9 +365,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       },
 
       /**
-       * Get params for request sessions.
+       * Get params for retrieving sessions for month.
        *
        * @since [*next-version*]
+       *
+       * @param {Date} month Month for which sessions should be loaded.
        *
        * @return {{service: Number, start: (string), end: (string)}}
        */
