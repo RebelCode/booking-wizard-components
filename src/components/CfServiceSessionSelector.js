@@ -383,6 +383,24 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @return {{service: Number, start: (string), end: (string)}}
        */
       _prepareSessionRequestParams (date) {
+        let { start, end } = this._getDateRange(date)
+        return {
+          service: this.service.id,
+          start,
+          end
+        }
+      },
+
+      /**
+       * Get date range from given date.
+       *
+       * @since [*next-version*]
+       *
+       * @param {Date} date Date for which sessions should be loaded.
+       *
+       * @return {{start: string, end: string}} Date range for given date, formatted in ISO8601.
+       */
+      _getDateRange (date) {
         const currentDay = this.createLocalDatetime()
 
         const firstDayOfRange = this.createLocalDatetime(date).startOf('month')
@@ -392,7 +410,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         const end = lastDayOfRange.endOf('day').format()
 
         return {
-          service: this.service.id,
           start,
           end
         }
