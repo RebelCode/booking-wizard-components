@@ -140,6 +140,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       service: {
         immediate: true,
         handler () {
+          this.sessionDuration = null
           this.$nextTick(this._setCleanStateValues)
         }
       },
@@ -330,6 +331,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
+
+        console.info('[service watch] ROOT COMPONENT, $nextTick')
+
         if (this.isEditing) {
           return
         }

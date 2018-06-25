@@ -73,7 +73,8 @@ export default function (CreateDatetimeCapable, dateFormats) {
        */
       visibleSessions () {
         return this.sessions.filter((session) => {
-          return session.duration === this.selectedSessionLength.sessionLength
+          return !!this.selectedSessionLength
+            && session.duration === this.selectedSessionLength.sessionLength
         })
       },
     },
