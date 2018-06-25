@@ -134,7 +134,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
          *
          * @property {Date} openedOnDate Date, on which datepicker is opened.
          */
-        openedOnDate: null
+        openedOnDate: this.createLocalDatetime().toDate()
       }
     },
     watch: {
@@ -348,7 +348,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
         this.$nextTick(() => {
           if (this.service) {
-            this.loadSessions(this.openedOnDate || this.createLocalDatetime().toDate())
+            this.loadSessions(this.openedOnDate)
           }
         })
       },
@@ -358,13 +358,13 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        *
-       * @param {Date} month Month for which sessions should be loaded.
+       * @param {Date} date Date for which sessions should be loaded.
        *
        * @return {Promise<any>}
        */
-      loadSessions (month) {
+      loadSessions (date) {
         this.isSessionsLoading = true
-        return sessionsApi.fetch(this._prepareSessionRequestParams(month)).then(sessions => {
+        return sessionsApi.fetch(this._prepareSessionRequestParams(date)).then(sessions => {
           this.sessions = this._addPreloadedSession(sessions, this.preloadedSession)
           this.isSessionsLoading = false
         }, error => {
@@ -378,18 +378,18 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        *
-       * @param {Date} month Month for which sessions should be loaded.
+       * @param {Date} date Date for which sessions should be loaded.
        *
        * @return {{service: Number, start: (string), end: (string)}}
        */
-      _prepareSessionRequestParams (month) {
+      _prepareSessionRequestParams (date) {
         const currentDay = this.createLocalDatetime()
 
-        const firstDayOfMonth = this.createLocalDatetime(month).startOf('month')
-        const lastDayOfMonth = this.createLocalDatetime(month).endOf('month')
+        const firstDayOfRange = this.createLocalDatetime(date).startOf('month')
+        const lastDayOfRange = this.createLocalDatetime(date).endOf('month')
 
-        const start = (currentDay.isAfter(firstDayOfMonth) ? currentDay : firstDayOfMonth).startOf('day').format()
-        const end = lastDayOfMonth.endOf('day').format()
+        const start = (currentDay.isAfter(firstDayOfRange) ? currentDay : firstDayOfRange).startOf('day').format()
+        const end = lastDayOfRange.endOf('day').format()
 
         return {
           service: this.service.id,
