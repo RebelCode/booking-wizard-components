@@ -64,7 +64,6 @@ export default function () {
       service: {
         immediate: true,
         handler () {
-          console.info('[service watch] DURATION PICKER')
           if (!this.valueProxy) {
             this.valueProxy = this.service.sessionLengths[0]
           }

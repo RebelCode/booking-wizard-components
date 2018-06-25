@@ -331,9 +331,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
-
-        console.info('[service watch] ROOT COMPONENT, $nextTick')
-
         if (this.isEditing) {
           return
         }
