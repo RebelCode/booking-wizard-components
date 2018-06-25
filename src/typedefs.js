@@ -19,6 +19,23 @@
  */
 
 /**
+ * Service that can be booked.
+ *
+ * @typedef {Object} BookableService
+ *
+ * @property {number} id Service identifier
+ * @property {ServiceSessionDuration[]} sessionLengths List of available session's durations for given service.
+ */
+
+/**
+ * Available duration of booking session.
+ *
+ * @typedef {Object} ServiceSessionDuration
+ *
+ * @property {number} sessionLength Length of session in seconds.
+ */
+
+/**
  * Object that represents range for booking sessions.
  *
  * @typedef {Object} BookingSessionsRange
