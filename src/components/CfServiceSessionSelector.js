@@ -128,6 +128,13 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
          * @property {object} sessionDuration Selected session duration
          */
         sessionDuration: null,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {Date} openedMonth Month, on which datepicker is opened.
+         */
+        openedMonth: null
       }
     },
     watch: {
@@ -272,6 +279,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
         this.selectedDay = sessionStart.toDate()
+        this.openedMonth = sessionStart.toDate()
         this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
           return sessionLength.sessionLength === this.preloadedSession.duration
         })
@@ -340,7 +348,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
         this.$nextTick(() => {
           if (this.service) {
-            this.loadSessions(this.createLocalDatetime().toDate())
+            this.loadSessions(this.openedMonth || this.createLocalDatetime().toDate())
           }
         })
       },
