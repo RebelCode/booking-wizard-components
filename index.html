@@ -13,16 +13,19 @@
 <div id="app">
     <app inline-template>
         <div>
-            <div>Selected session: <code>{{ session }}</code></div>
             <select v-model="timezone">
                 <option value="Pacific/Tahiti">Pacific/Tahiti</option>
                 <option value="Europe/Kiev">Europe/Kiev</option>
                 <option value="Europe/Minsk">Europe/Minsk</option>
                 <option value="America/Phoenix">America/Phoenix</option>
             </select>
+            <select v-model="service">
+                <option :value="iService" v-for="iService of services">{{ iService.name }}</option>
+            </select>
             <service-session-selector :service="service"
                                       v-model="session"
                                       :timezone="timezone"
+                                      v-if="service"
             ></service-session-selector>
         </div>
     </app>
@@ -50,6 +53,7 @@
                     v-model="selectedDaySessions"
                     :is-daily-duration="isDailyDuration"
                     :selected-day.sync="selectedDay"
+                    :opened-on-date.sync="openedOnDate"
                     :session.sync="session"
                     :loading="isSessionsLoading"
                     :selected-session-length="sessionDuration"
@@ -76,6 +80,7 @@
                                     :service="service"
                                     :timezone="timezone"
                                     :sessions="selectedDaySessions"
+                                    v-model="session"
                             ></session-time-picker>
                         </div>
                     </div>
@@ -171,6 +176,35 @@
           inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
+              services: [
+                {
+                  'id': 37,
+                  'name': 'Hourly Service',
+                  'description': '',
+                  'imageSrc': false,
+                  'bookingsEnabled': '1',
+                  'sessionLengths': [{
+                    'sessionLength': 2700,
+                    'price': {'amount': '20', 'currency': 'USD', 'formatted': '$20.00'}
+                  }, {'sessionLength': 7200, 'price': {'amount': '40', 'currency': 'USD', 'formatted': '$40.00'}}],
+                  'displayOptions': {'useCustomerTimezone': false},
+                  'timezone': 'UTC+0',
+                  'availabilities': {'rules': []}
+                }, {
+                  'id': 34,
+                  'name': 'Yoga Crash',
+                  'description': '',
+                  'imageSrc': false,
+                  'bookingsEnabled': '1',
+                  'sessionLengths': [{
+                    'sessionLength': 172800,
+                    'price': {'amount': '100', 'currency': 'USD', 'formatted': '$100.00'}
+                  }, {'sessionLength': 432000, 'price': {'amount': '700', 'currency': 'USD', 'formatted': '$700.00'}}],
+                  'displayOptions': {'useCustomerTimezone': false},
+                  'timezone': 'UTC+0',
+                  'availabilities': {'rules': []}
+                }
+              ],
               service: {
                 'id': 34,
                 'name': 'Yoga Crash',

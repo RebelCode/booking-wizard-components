@@ -128,6 +128,13 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
          * @property {object} sessionDuration Selected session duration
          */
         sessionDuration: null,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {Date} openedOnDate Date, on which datepicker is opened.
+         */
+        openedOnDate: this.createLocalDatetime().toDate()
       }
     },
     watch: {
@@ -140,6 +147,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       service: {
         immediate: true,
         handler () {
+          this.sessionDuration = null
           this.$nextTick(this._setCleanStateValues)
         }
       },
@@ -271,6 +279,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
         this.selectedDay = sessionStart.toDate()
+        this.openedOnDate = sessionStart.toDate()
         this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
           return sessionLength.sessionLength === this.preloadedSession.duration
         })
@@ -339,7 +348,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
         this.$nextTick(() => {
           if (this.service) {
-            this.loadSessions(this.createLocalDatetime().toDate())
+            this.loadSessions(this.openedOnDate)
           }
         })
       },
@@ -349,13 +358,13 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        *
-       * @param {Date} month Month for which sessions should be loaded.
+       * @param {Date} date Date for which sessions should be loaded.
        *
        * @return {Promise<any>}
        */
-      loadSessions (month) {
+      loadSessions (date) {
         this.isSessionsLoading = true
-        return sessionsApi.fetch(this._prepareSessionRequestParams(month)).then(sessions => {
+        return sessionsApi.fetch(this._prepareSessionRequestParams(date)).then(sessions => {
           this.sessions = this._addPreloadedSession(sessions, this.preloadedSession)
           this.isSessionsLoading = false
         }, error => {
@@ -369,21 +378,38 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        *
-       * @param {Date} month Month for which sessions should be loaded.
+       * @param {Date} date Date for which sessions should be loaded.
        *
        * @return {{service: Number, start: (string), end: (string)}}
        */
-      _prepareSessionRequestParams (month) {
-        const currentDay = this.createLocalDatetime()
-
-        const firstDayOfMonth = this.createLocalDatetime(month).startOf('month')
-        const lastDayOfMonth = this.createLocalDatetime(month).endOf('month')
-
-        const start = (currentDay.isAfter(firstDayOfMonth) ? currentDay : firstDayOfMonth).startOf('day').format()
-        const end = lastDayOfMonth.endOf('day').format()
-
+      _prepareSessionRequestParams (date) {
+        let { start, end } = this._getDateRange(date)
         return {
           service: this.service.id,
+          start,
+          end
+        }
+      },
+
+      /**
+       * Get date range from given date.
+       *
+       * @since [*next-version*]
+       *
+       * @param {Date} date Date for which sessions should be loaded.
+       *
+       * @return {{start: string, end: string}} Date range for given date, formatted in ISO8601.
+       */
+      _getDateRange (date) {
+        const currentDay = this.createLocalDatetime()
+
+        const firstDayOfRange = this.createLocalDatetime(date).startOf('month')
+        const lastDayOfRange = this.createLocalDatetime(date).endOf('month')
+
+        const start = (currentDay.isAfter(firstDayOfRange) ? currentDay : firstDayOfRange).startOf('day').format()
+        const end = lastDayOfRange.endOf('day').format()
+
+        return {
           start,
           end
         }

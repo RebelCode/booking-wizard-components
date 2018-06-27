@@ -27,19 +27,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
       'datepicker': 'datepicker',
     },
 
-    data () {
-      return {
-        /**
-         * Date on which datepicker is opened
-         *
-         * @since [*next-version*]
-         *
-         * @var {Date|null}
-         */
-        openedOnDate: null
-      }
-    },
-
     props: {
       /**
        * @since [*next-version*]
@@ -117,6 +104,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
         default () {
           return []
         }
+      },
+
+      /**
+       * @since [*next-version*]
+       *
+       * @property {Date} openedOnDate Date, on which datepicker is opened.
+       */
+      openedOnDate: {
+        default: null
       },
 
       /**
@@ -224,13 +220,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {Date} value Selected date.
        */
       selectedDay (value) {
-        /*
-         * Store position (month) of datepicker.
-         */
-        if (value) {
-          this.openedOnDate = value
-        }
-
         const selectedDaySessions = this.getSessionsForDay(value)
 
         this.$emit('input', selectedDaySessions)
@@ -278,7 +267,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {Date} newMonth Newly selected month.
        */
       onMonthChange (newMonth) {
-        this.openedOnDate = newMonth
+        this.$emit('update:openedOnDate', newMonth)
         this.$emit('changedMonth', newMonth)
       },
 
