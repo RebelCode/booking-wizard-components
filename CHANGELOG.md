@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Added
+- `TimezoneSelect` component for selecting timezone.
+
 ## [0.1.4] - 2018-06-27
 ### Added
 - `DateNavigator` component to switch days using "next", "prev" buttons.
