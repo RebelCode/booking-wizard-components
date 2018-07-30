@@ -59,16 +59,18 @@ export default class SessionsApi extends Api {
    *
    * @param {number} service Service id to get sessions for
    * @param {string} start Start range in ISO8601 format
+   * @param {string} end End range in ISO8601 format
    *
    * @return {BookingSession[]}
    */
-  _getSessions({ service, start }) {
+  _getSessions({ service, start, end }) {
     start = this.moment(start).unix()
+    end = this.moment(end).unix()
     const startNow = this.moment().unix()
     start = startNow > start ? startNow : start
     return this.sessions.filter(session => {
       return session.service === service
-        && session.startUnix >= start
+        && (session.startUnix < end || session.endUnix > start)
     }).map(session => this._cleanSessionQueryFields(session))
   }
 
@@ -91,6 +93,7 @@ export default class SessionsApi extends Api {
   _addSessionQueryFields (session) {
     session = Object.assign({}, session)
     session['startUnix'] = this.moment(session.start).unix()
+    session['endUnix'] = this.moment(session.end).unix()
     return session
   }
 
@@ -104,6 +107,7 @@ export default class SessionsApi extends Api {
   _cleanSessionQueryFields (session) {
     session = Object.assign({}, session)
     delete session['startUnix']
+    delete session['endUnix']
     return session
   }
 }

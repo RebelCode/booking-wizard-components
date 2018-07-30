@@ -16,6 +16,7 @@
  * @typedef {BookingSession} BookingStoredSession
  *
  * @property {number} startUnix Session start time in unix timestamp
+ * @property {number} endUnix Session end time in unix timestamp
  */
 
 /**

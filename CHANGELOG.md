@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `TimezoneSelect` component for selecting timezone.
 
+### Changed
+- Session selection condition changed to allow selecting sessions that starts in the one month and ends in the another one.
+
 ## [0.1.4] - 2018-06-27
 ### Added
 - `DateNavigator` component to switch days using "next", "prev" buttons.
