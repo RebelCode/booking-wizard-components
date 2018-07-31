@@ -4,6 +4,7 @@
  * @typedef {Object} BookingSession
  *
  * @property {number} duration Session duration in seconds
+ * @property {number} startUnix Session start time in unix timestamp
  * @property {string} start Session start datetime in ISO8601 format
  * @property {string} end Session start datetime in ISO8601 format
  * @property {number} service Session's service ID
@@ -15,7 +16,6 @@
  *
  * @typedef {BookingSession} BookingStoredSession
  *
- * @property {number} startUnix Session start time in unix timestamp
  * @property {number} endUnix Session end time in unix timestamp
  */
 

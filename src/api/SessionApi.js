@@ -84,6 +84,16 @@ export default class SessionsApi extends Api {
   }
 
   /**
+   * Clear sessions and range cache.
+   *
+   * @since [*next-version*]
+   */
+  clearCache() {
+    this.sessions = []
+    this.rangeCache.clear()
+  }
+
+  /**
    * Add helping fields on session before saving it to store.
    *
    * @param {BookingSession} session Session to save in store.
@@ -92,7 +102,6 @@ export default class SessionsApi extends Api {
    */
   _addSessionQueryFields (session) {
     session = Object.assign({}, session)
-    session['startUnix'] = this.moment(session.start).unix()
     session['endUnix'] = this.moment(session.end).unix()
     return session
   }
@@ -106,7 +115,6 @@ export default class SessionsApi extends Api {
    */
   _cleanSessionQueryFields (session) {
     session = Object.assign({}, session)
-    delete session['startUnix']
     delete session['endUnix']
     return session
   }
