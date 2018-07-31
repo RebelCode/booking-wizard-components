@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [[*next-version*]] - YYYY-MM-DD
 ### Added
 - `TimezoneSelect` component for selecting timezone.
+- Added ordering for session time list.
 
 ### Changed
 - Session selection condition changed to allow selecting sessions that starts in the one month and ends in the another one.
+- Sessions and range cache invalidated when `ServiceSessionSelector` is destroyed.
 
 ## [0.1.4] - 2018-06-27
 ### Added
