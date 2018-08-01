@@ -72,10 +72,12 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @return {object[]}
        */
       visibleSessions () {
-        return this.sessions.filter((session) => {
-          return !!this.selectedSessionLength
-            && session.duration === this.selectedSessionLength.sessionLength
-        })
+        return this.sessions
+          .filter((session) => {
+            return !!this.selectedSessionLength
+              && session.duration === this.selectedSessionLength.sessionLength
+          })
+          .sort((a, b) => (a.startUnix - b.startUnix))
       },
     },
 

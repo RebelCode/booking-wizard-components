@@ -82,6 +82,15 @@ export default class RangeCache {
   }
 
   /**
+   * Clear range cache.
+   *
+   * @since [*next-version*]
+   */
+  clear () {
+    this.rangeCache = []
+  }
+
+  /**
    * Get list of full period ranges.
    *
    * @since [*next-version*]

@@ -265,6 +265,18 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         this.editSession()
       }
     },
+
+    /**
+     * Hook that would be triggered when component is destroyed. Here
+     * we are cleaning sessions cache to give user appropriate sessions
+     * after component re-creation.
+     *
+     * @since [*next-version*]
+     */
+    destroyed () {
+      sessionsApi.clearCache()
+    },
+
     methods: {
       /**
        * When the picker in the edit mode (so session is preloaded), this allows

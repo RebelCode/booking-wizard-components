@@ -30,7 +30,11 @@ export default class SessionReadTransformer extends Transformer {
      * @return {*}
      */
     start: (model) => {
-      model['duration'] = this.moment(model.end).unix() - this.moment(model.start).unix()
+      const startUnix = this.moment(model.start).unix()
+
+      model['duration'] = this.moment(model.end).unix() - startUnix
+      model['startUnix'] = startUnix
+
       return model
     },
     /**
