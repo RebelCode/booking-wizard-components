@@ -300,16 +300,16 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        */
       initShowMode () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
-        const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
-
-        this.selectedDay = sessionStart.toDate()
-        this.openedOnDate = sessionStart.toDate()
-
         this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
           return sessionLength.sessionLength === this.preloadedSession.duration
         })
-
         this.sessions = [this.preloadedSession]
+
+        this.$nextTick(() => {
+          const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
+          this.selectedDay = sessionStart.toDate()
+          this.openedOnDate = sessionStart.toDate()
+        })
       },
 
       /**
