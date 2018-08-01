@@ -158,12 +158,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        */
-      service: {
-        immediate: true,
-        handler () {
-          this.sessionDuration = null
-          this.$nextTick(this._setCleanStateValues)
-        }
+      service () {
+        this.sessionDuration = null
+        this.$nextTick(this._setCleanStateValues)
       },
 
       /**
@@ -277,6 +274,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       if (this.value) {
         this.isEditModeAvailable = true
         this.initShowMode()
+      }
+      else if (this.service) {
+        this.$nextTick(() => this.loadSessions(this.openedOnDate))
       }
     },
 
@@ -395,12 +395,10 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
-        if (this.isEditModeAvailable && !this.isEditing) {
-          return
-        }
-
         this.selectedDay = null
         this.sessions = []
+        this.isEditModeAvailable = false
+        this.isEditing = false
 
         this.$nextTick(() => {
           if (this.service) {

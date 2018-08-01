@@ -71,6 +71,7 @@ export default class SessionsApi extends Api {
     return this.sessions.filter(session => {
       return session.service === service
         && (session.startUnix < end || session.endUnix > start)
+        && session.startUnix > start
     }).map(session => this._cleanSessionQueryFields(session))
   }
 
