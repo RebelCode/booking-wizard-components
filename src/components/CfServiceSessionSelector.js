@@ -84,9 +84,23 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         /**
          * @since [*next-version*]
          *
-         * @property {Boolean} isEditing Is selector in edit mode now.
+         * @property {Boolean} isEditModeAvailable Is selector has selected value on init, so edit mode is available.
+         */
+        isEditModeAvailable: false,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {Boolean} isEditing Is session selector in edit mode now.
          */
         isEditing: false,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {object|null} editingValue Selected session that is editing, passed via `v-model` in parent
+         */
+        oldValue: null,
 
         /**
          * @since [*next-version*]
@@ -261,8 +275,8 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
      */
     created () {
       if (this.value) {
-        this.isEditing = true
-        this.editSession()
+        this.isEditModeAvailable = true
+        this.initShowMode()
       }
     },
 
@@ -279,26 +293,56 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
     methods: {
       /**
-       * When the picker in the edit mode (so session is preloaded), this allows
-       * to edit that session time.
+       * Init "show" session selector mode. It is used for showing selected session, but it
+       * doesn't allow to change selected session until user entered in "Edit" mode.
        *
        * @since [*next-version*]
        */
-      editSession () {
-        this.isSessionsLoading = true
-
+      initShowMode () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
         this.selectedDay = sessionStart.toDate()
         this.openedOnDate = sessionStart.toDate()
+
         this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
           return sessionLength.sessionLength === this.preloadedSession.duration
         })
 
+        this.sessions = [this.preloadedSession]
+      },
+
+      /**
+       * When the picker in the edit mode (so session is preloaded), this allows
+       * to edit that session time.
+       *
+       * @since [*next-version*]
+       */
+      startEdit () {
+        this.isEditing = true
+        this.oldValue = Object.assign({}, this.value)
+
+        const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
+
         this.loadSessions(sessionStart).then(() => {
-          this.isEditing = false
+          this.selectedDay = sessionStart.toDate()
         })
+      },
+
+      /**
+       * Revert edit and enable "show" mode.
+       *
+       * @since [*next-version*]
+       */
+      cancelEdit () {
+        if (this.isSessionsLoading) {
+          return
+        }
+
+        this.isEditing = false
+        this.$emit('input', this.oldValue)
+
+        this.$nextTick(this.initShowMode)
       },
 
       /**
@@ -351,7 +395,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
-        if (this.isEditing) {
+        if (this.isEditModeAvailable && !this.isEditing) {
           return
         }
 
