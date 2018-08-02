@@ -84,21 +84,21 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         /**
          * @since [*next-version*]
          *
-         * @property {Boolean} isEditModeAvailable Is selector has selected value on init, so edit mode is available.
+         * @property {Boolean} isEditModeAvailable Whether the session selector has selected value on component's init.
          */
         isEditModeAvailable: false,
 
         /**
          * @since [*next-version*]
          *
-         * @property {Boolean} isEditing Is session selector in edit mode now.
+         * @property {Boolean} isEditing Whether the session selector is in edit mode.
          */
         isEditing: false,
 
         /**
          * @since [*next-version*]
          *
-         * @property {object|null} editingValue Selected session that is editing, passed via `v-model` in parent
+         * @property {object|null} oldValue Selected session that is being edited, passed via `v-model` in parent
          */
         oldValue: null,
 
