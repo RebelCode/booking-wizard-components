@@ -32,6 +32,10 @@
 </div>
 <script type="text/x-template" id="service-session-selector-template">
     <div>
+        <div v-if="isEditModeAvailable">
+            <button v-if="!isEditing" @click="startEdit">select another session</button>
+            <button v-else @click="cancelEdit">cancel edit</button>
+        </div>
         <div>value: <code>{{ value }}</code></div>
 
         <template v-if="!service">
@@ -44,23 +48,23 @@
             <div>
                 <div><code>selected session duration: {{ sessionDuration }}</code></div>
                 <session-duration-picker
-                    v-model="sessionDuration"
-                    :service="service"
+                        v-model="sessionDuration"
+                        :service="service"
                 ></session-duration-picker>
             </div>
             <div>
                 <session-date-picker
-                    v-model="selectedDaySessions"
-                    :is-daily-duration="isDailyDuration"
-                    :selected-day.sync="selectedDay"
-                    :opened-on-date.sync="openedOnDate"
-                    :session.sync="session"
-                    :loading="isSessionsLoading"
-                    :selected-session-length="sessionDuration"
-                    :available-sessions="sessions"
-                    :prev-available-day.sync="prevAvailableDay"
-                    :next-available-day.sync="nextAvailableDay"
-                    @changedMonth="loadSessions"
+                        v-model="selectedDaySessions"
+                        :is-daily-duration="isDailyDuration"
+                        :selected-day.sync="selectedDay"
+                        :opened-on-date.sync="openedOnDate"
+                        :session.sync="session"
+                        :loading="isSessionsLoading"
+                        :selected-session-length="sessionDuration"
+                        :available-sessions="sessions"
+                        :prev-available-day.sync="prevAvailableDay"
+                        :next-available-day.sync="nextAvailableDay"
+                        @changedMonth="loadSessions"
                 ></session-date-picker>
             </div>
             <div v-if="!isDailyDuration">

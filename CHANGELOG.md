@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Session selection condition changed to allow selecting sessions that starts in the one month and ends in the another one.
 - Sessions and range cache invalidated when `ServiceSessionSelector` is destroyed.
+- Edit mode allows to preview date and session without loading all sessions.
 
 ## [0.1.4] - 2018-06-27
 ### Added

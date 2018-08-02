@@ -84,9 +84,23 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         /**
          * @since [*next-version*]
          *
-         * @property {Boolean} isEditing Is selector in edit mode now.
+         * @property {Boolean} isEditModeAvailable Whether the session selector has selected value on component's init.
+         */
+        isEditModeAvailable: false,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {Boolean} isEditing Whether the session selector is in edit mode.
          */
         isEditing: false,
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {object|null} oldValue Selected session that is being edited, passed via `v-model` in parent
+         */
+        oldValue: null,
 
         /**
          * @since [*next-version*]
@@ -144,12 +158,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        *
        * @since [*next-version*]
        */
-      service: {
-        immediate: true,
-        handler () {
-          this.sessionDuration = null
-          this.$nextTick(this._setCleanStateValues)
-        }
+      service () {
+        this.sessionDuration = null
+        this.$nextTick(this._setCleanStateValues)
       },
 
       /**
@@ -261,8 +272,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
      */
     created () {
       if (this.value) {
-        this.isEditing = true
-        this.editSession()
+        this.isEditModeAvailable = true
+        this.initShowMode()
+      }
+      else if (this.service) {
+        this.$nextTick(() => this.loadSessions(this.openedOnDate))
       }
     },
 
@@ -279,26 +293,56 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
     methods: {
       /**
+       * Init "show" session selector mode. It is used for showing selected session, but it
+       * doesn't allow to change selected session until user entered in "Edit" mode.
+       *
+       * @since [*next-version*]
+       */
+      initShowMode () {
+        this.preloadedSession = this.sessionReadTransformer.transform(this.value)
+        this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
+          return sessionLength.sessionLength === this.preloadedSession.duration
+        })
+        this.sessions = [this.preloadedSession]
+
+        this.$nextTick(() => {
+          const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
+          this.selectedDay = sessionStart.toDate()
+          this.openedOnDate = sessionStart.toDate()
+        })
+      },
+
+      /**
        * When the picker in the edit mode (so session is preloaded), this allows
        * to edit that session time.
        *
        * @since [*next-version*]
        */
-      editSession () {
-        this.isSessionsLoading = true
+      startEdit () {
+        this.isEditing = true
+        this.oldValue = Object.assign({}, this.value)
 
-        this.preloadedSession = this.sessionReadTransformer.transform(this.value)
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
-        this.selectedDay = sessionStart.toDate()
-        this.openedOnDate = sessionStart.toDate()
-        this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
-          return sessionLength.sessionLength === this.preloadedSession.duration
-        })
-
         this.loadSessions(sessionStart).then(() => {
-          this.isEditing = false
+          this.selectedDay = sessionStart.toDate()
         })
+      },
+
+      /**
+       * Revert edit and enable "show" mode.
+       *
+       * @since [*next-version*]
+       */
+      cancelEdit () {
+        if (this.isSessionsLoading) {
+          return
+        }
+
+        this.isEditing = false
+        this.$emit('input', this.oldValue)
+
+        this.$nextTick(this.initShowMode)
       },
 
       /**
@@ -351,12 +395,10 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       _setCleanStateValues () {
-        if (this.isEditing) {
-          return
-        }
-
         this.selectedDay = null
         this.sessions = []
+        this.isEditModeAvailable = false
+        this.isEditing = false
 
         this.$nextTick(() => {
           if (this.service) {
