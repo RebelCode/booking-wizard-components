@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+## [0.1.6] - 2018-08-30
+### Added
+- `timezone` property on `SessionDatePicker`.
+
+## [0.1.5] - 2018-08-13
 ### Added
 - `TimezoneSelect` component for selecting timezone.
 - Added ordering for session time list.
