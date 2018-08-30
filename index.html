@@ -60,6 +60,7 @@
                         :opened-on-date.sync="openedOnDate"
                         :session.sync="session"
                         :loading="isSessionsLoading"
+                        :timezone="timezone"
                         :selected-session-length="sessionDuration"
                         :available-sessions="sessions"
                         :prev-available-day.sync="prevAvailableDay"
@@ -180,44 +181,18 @@
           inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
-              services: [{
-                'id': 58,
-                'name': 'Yoga Course',
-                'description': 'Nice and beautiful yoga courses for your mind and body.',
-                'imageSrc': false,
-                'bookingsEnabled': '1',
-                'sessionLengths': [{
-                  'sessionLength': 14400,
-                  'price': {'amount': '40', 'currency': 'EUR', 'formatted': '\u20ac40.00'}
-                }],
-                'displayOptions': {'allowCustomerChangeTimezone': true},
-                'timezone': 'UTC+5',
-                'availabilities': {'rules': []}
-              }],
-              service: {
-                'id': 58,
-                'name': 'Yoga Course',
-                'description': 'Nice and beautiful yoga courses for your mind and body.',
-                'imageSrc': false,
-                'bookingsEnabled': '1',
-                'sessionLengths': [{
-                  'sessionLength': 14400,
-                  'price': {'amount': '40', 'currency': 'EUR', 'formatted': '\u20ac40.00'}
-                }],
-                'displayOptions': {'allowCustomerChangeTimezone': true},
-                'timezone': 'UTC+5',
-                'availabilities': {'rules': []}
-              },
-              // session: null,
-              session: {
-                'id': '73365',
-                'start': '2018-08-09T04:00:00+00:00',
-                'end': '2018-08-09T08:00:00+00:00',
-                'service': 58,
-                'resource': 58,
-                'duration': 14400
-              },
-              timezone: this.moment.tz.guess()
+              services: [{"id":8,"name":"test monthly","description":"","imageSrc":false,"bookingsEnabled":"1","sessionLengths":[{"sessionLength":7200,"price":{"amount":"12","currency":"USD","formatted":"$12.00"}}],"displayOptions":{"allowCustomerChangeTimezone":false},"timezone":"America\/Los_Angeles","availabilities":{"rules":[]}}],
+              service: {"id":8,"name":"test monthly","description":"","imageSrc":false,"bookingsEnabled":"1","sessionLengths":[{"sessionLength":7200,"price":{"amount":"12","currency":"USD","formatted":"$12.00"}}],"displayOptions":{"allowCustomerChangeTimezone":false},"timezone":"America\/Los_Angeles","availabilities":{"rules":[]}},
+              session: null,
+              // session: {
+              //   'id': '73365',
+              //   'start': '2018-08-09T04:00:00+00:00',
+              //   'end': '2018-08-09T08:00:00+00:00',
+              //   'service': 58,
+              //   'resource': 58,
+              //   'duration': 14400
+              // },
+              timezone: "America\/Los_Angeles",//this.moment.tz.guess()
             }
           },
           components: {

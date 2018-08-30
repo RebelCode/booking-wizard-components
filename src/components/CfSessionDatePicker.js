@@ -31,6 +31,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
+       * @property {string|null} timezone Name of timezone in which sessions will be displayed.
+       */
+      timezone: {
+        default: null
+      },
+
+      /**
+       * @since [*next-version*]
+       *
        * @property {String|null} selectedDay Selected day to show sessions from.
        */
       selectedDay: {
