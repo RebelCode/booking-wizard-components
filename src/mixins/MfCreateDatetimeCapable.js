@@ -35,7 +35,7 @@ export default function MfCreateDatetimeCapable (moment) {
        */
       createLocalDatetime: {
         default () {
-          return  (value = null) => {
+          return (value = null) => {
             if (!value) {
               value = moment()
             }
@@ -43,6 +43,21 @@ export default function MfCreateDatetimeCapable (moment) {
           }
         }
       },
+
+      /**
+       * Function for creating date strings.
+       *
+       * @since [*next-version*]
+       *
+       * @param {CreateDateStringFunction} createDateString
+       */
+      createDateString: {
+        default () {
+          return (value) => {
+            return moment(value).format('YYYY-MM-DD')
+          }
+        }
+      }
     }
   }
 }
