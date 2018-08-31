@@ -68,7 +68,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @property {string}
        */
       selectedDaySessionsLabel () {
-        return this.createLocalDatetime(this.selectedDay).format(dateFormats.dayShort)
+        return this.createDatetime(this.selectedDay).format(dateFormats.dayShort)
       },
     },
     methods: {

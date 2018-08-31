@@ -31,6 +31,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
+       * @property {string|null} timezone Name of timezone in which sessions will be displayed.
+       */
+      timezone: {
+        default: null
+      },
+
+      /**
+       * @since [*next-version*]
+       *
        * @property {String|null} selectedDay Selected day to show sessions from.
        */
       selectedDay: {
@@ -136,7 +145,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
           return this.selectedDay
         },
         set (value) {
-          this.$emit('update:selectedDay', value)
+          this.$emit('update:selectedDay', this.createDateString(value))
         }
       },
 
@@ -217,7 +226,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        *
        * @since [*next-version*]
        *
-       * @param {Date} value Selected date.
+       * @param {string} value Selected date.
        */
       selectedDay (value) {
         const selectedDaySessions = this.getSessionsForDay(value)
@@ -276,14 +285,14 @@ export default function (CreateDatetimeCapable, dateFormats) {
        *
        * @since [*next-version*]
        *
-       * @param {Date|string} day Day to get sessions for.
+       * @param {string} day Day to get sessions for.
        *
        * @return {object[]}
        */
       getSessionsForDay (day) {
         let selectedDaySessions = []
         if (day) {
-          selectedDaySessions = this.daysWithSessions[this._getDayKey(day)] || []
+          selectedDaySessions = this.daysWithSessions[day] || []
         }
         return selectedDaySessions
       },
@@ -298,11 +307,11 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @return {string} The closest next available day with sessions.
        */
       getNextAvailableDay (day) {
-        const selectedDayIndex = this.availableDays.indexOf(this._getDayKey(day))
+        const selectedDayIndex = this.availableDays.indexOf(day)
         const availableDaysCount = this.availableDays.length
         let result = null
         if (availableDaysCount - 1 !== selectedDayIndex) {
-          result = this.createLocalDatetime(this.availableDays[selectedDayIndex + 1]).format()
+          result = this.availableDays[selectedDayIndex + 1]
         }
         return result
       },
@@ -317,10 +326,10 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @return {string} The closest previous available day with sessions.
        */
       getPrevAvailableDay (day) {
-        const selectedDayIndex = this.availableDays.indexOf(this._getDayKey(day))
+        const selectedDayIndex = this.availableDays.indexOf(day)
         let result = null
         if (selectedDayIndex !== 0) {
-          result = this.createLocalDatetime(this.availableDays[selectedDayIndex - 1]).format()
+          result = this.availableDays[selectedDayIndex - 1]
         }
         return result
       },
@@ -338,7 +347,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
         if (this.loading) {
           return true
         }
-        const dateKey = this._getDayKey(date)
+        const dateKey = this.createDateString(date)
         return Object.keys(this.daysWithSessions).indexOf(dateKey) === -1
       },
 

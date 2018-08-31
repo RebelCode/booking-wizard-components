@@ -307,8 +307,8 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
 
         this.$nextTick(() => {
           const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
-          this.selectedDay = sessionStart.toDate()
-          this.openedOnDate = sessionStart.toDate()
+          this.selectedDay = this.createDateString(sessionStart)
+          this.openedOnDate = this.createDateString(sessionStart)
         })
       },
 
@@ -325,7 +325,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
         this.loadSessions(sessionStart).then(() => {
-          this.selectedDay = sessionStart.toDate()
+          this.selectedDay = this.createDateString(sessionStart)
         })
       },
 
@@ -455,10 +455,10 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @return {{start: string, end: string}} Date range for given date, formatted in ISO8601.
        */
       _getDateRange (date) {
-        const currentDay = this.createLocalDatetime()
+        const currentDay = this.createDatetime()
 
-        const firstDayOfRange = this.createLocalDatetime(date).startOf('month')
-        const lastDayOfRange = this.createLocalDatetime(date).endOf('month')
+        const firstDayOfRange = this.createDatetime(date).startOf('month')
+        const lastDayOfRange = this.createDatetime(date).endOf('month')
 
         const start = (currentDay.isAfter(firstDayOfRange) ? currentDay : firstDayOfRange).startOf('day').format()
         const end = lastDayOfRange.endOf('day').format()
