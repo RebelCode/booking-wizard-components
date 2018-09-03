@@ -202,7 +202,8 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @property {Date}
        */
       today () {
-        return this.createLocalDatetime().startOf('day').toDate()
+        const startOfToday = this.createLocalDatetime().startOf('day')
+        return new Date(startOfToday.year(), startOfToday.month(), startOfToday.date())
       },
 
       /**
