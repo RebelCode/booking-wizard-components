@@ -230,6 +230,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @param {string} value Selected date.
        */
       selectedDay (value) {
+        console.info('selected day', value)
         const selectedDaySessions = this.getSessionsForDay(value)
 
         this.$emit('input', selectedDaySessions)
