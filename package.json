@@ -1,6 +1,6 @@
 {
   "name": "@rebelcode/booking-wizard-components",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Booking wizard components",
   "sideEffects": false,
   "main": "dist/lib.min.js",

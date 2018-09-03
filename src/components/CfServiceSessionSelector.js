@@ -325,7 +325,10 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         const sessionStart = this.createLocalDatetime(this.preloadedSession.start)
 
         this.loadSessions(sessionStart).then(() => {
-          this.selectedDay = this.createDateString(sessionStart)
+          this.selectedDay = null
+          this.$nextTick(() => {
+            this.selectedDay = this.createDateString(sessionStart)
+          })
         })
       },
 
