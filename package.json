@@ -7,12 +7,14 @@
   "scripts": {
     "dev": "./node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=dev ./node_modules/.bin/webpack-dev-server --open",
     "build": "./node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=production ./node_modules/webpack/bin/webpack.js",
-    "prepublish": "npm run build"
+    "prepublish": "npm run build",
+    "test": "./node_modules/cross-env/dist/bin/cross-env.js mocha-webpack --webpack-config ./webpack.config.js --require test/setup.js test/**/*.spec.js"
   },
   "dependencies": {
     "@rebelcode/std-lib": "^0.1.4"
   },
   "devDependencies": {
+    "@vue/test-utils": "^1.0.0-beta.24",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-plugin-syntax-flow": "^6.18.0",
@@ -25,7 +27,13 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-preset-stage-2": "^6.22.0",
     "cross-env": "^5.1.1",
+    "expect": "^23.5.0",
     "html-webpack-plugin": "^3.2.0",
+    "jsdom": "^12.0.0",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^5.2.0",
+    "mocha-webpack": "^2.0.0-beta.0",
+    "moment": "^2.22.2",
     "vue": "^2.5.13",
     "vue-loader": "^14.2.2",
     "vue-template-compiler": "^2.5.16",
