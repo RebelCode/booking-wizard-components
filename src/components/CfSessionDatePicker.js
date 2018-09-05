@@ -142,7 +142,15 @@ export default function (CreateDatetimeCapable, dateFormats) {
        */
       selectedDayProxy: {
         get () {
-          return this.selectedDay
+          /*
+           * Timestamp is added due to missing default time in `Date` constructor.
+           *
+           * Assuming that timezone is LA:
+           *
+           * `new Date('2018-09-12') -> Tue Sep 11 2018 18:00:00 GMT-0600
+           * `new Date('2018-09-12 00:00:00') -> Wed Sep 12 2018 00:00:00 GMT-0600
+           */
+          return this.selectedDay + ' 00:00:00'
         },
         set (value) {
           this.$emit('update:selectedDay', this.createDateString(value))
