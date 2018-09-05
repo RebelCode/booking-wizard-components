@@ -5,9 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
-## [0.1.7] - 2018-09-03
+## [0.1.7] - 2018-09-05
 ### Fixed
 - Bug when today became unavailable after clicking on some day and timezone was west of Greenwich. 
+- Bug when previous day was highlighted as selected, after clicking on some day and PC timezone was west of Greenwich. 
 
 ### Changed
 - After entering into edit mode, all session displayed automatically without need of navigating to the another day.
