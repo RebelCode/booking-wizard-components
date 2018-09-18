@@ -31,7 +31,7 @@ export default function MfCreateDatetimeCapable (moment) {
        *
        * @since [*next-version*]
        *
-       * @param {CreateLocalDatetimeFunction} createLocalDatetime
+       * @property {CreateLocalDatetimeFunction} createLocalDatetime
        */
       createLocalDatetime: {
         default () {
@@ -49,7 +49,7 @@ export default function MfCreateDatetimeCapable (moment) {
        *
        * @since [*next-version*]
        *
-       * @param {CreateSameLocalDatetime} createSameLocalDatetime
+       * @property {CreateSameLocalDatetimeFunction} createSameLocalDatetime
        */
       createSameLocalDatetime: {
         default () {
@@ -66,7 +66,7 @@ export default function MfCreateDatetimeCapable (moment) {
        *
        * @since [*next-version*]
        *
-       * @param {CreateDateStringFunction} createDateString
+       * @property {CreateDateStringFunction} createDateString
        */
       createDateString: {
         default () {
