@@ -45,6 +45,23 @@ export default function MfCreateDatetimeCapable (moment) {
       },
 
       /**
+       * Function for creating the same time, but in local timezone.
+       *
+       * @since [*next-version*]
+       *
+       * @param {CreateSameLocalDatetime} createSameLocalDatetime
+       */
+      createSameLocalDatetime: {
+        default () {
+          return (value) => {
+            const TZ_FREE_FORMAT = 'YYYY-MM-DD HH:ii:ss'
+            const momentFixedTimezoneValue = moment.parseZone(value)
+            return moment.tz(momentFixedTimezoneValue.format(TZ_FREE_FORMAT), TZ_FREE_FORMAT, this.timezone)
+          }
+        }
+      },
+
+      /**
        * Function for creating date strings.
        *
        * @since [*next-version*]

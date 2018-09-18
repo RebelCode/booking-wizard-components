@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+### Added
+- `createSameLocalDatetime` method added to provide ability to create same datetime, but in different timezone.
+
 ## [0.1.8] - 2018-09-12
 ### Fixed
 - Bug when previous day was highlighted as selected, after clicking on some day and PC timezone was west of Greenwich. 
