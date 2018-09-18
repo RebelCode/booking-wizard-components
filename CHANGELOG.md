@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+## [0.1.9] - 2018-09-18
+### Fixed
+- Bug when `ServiceSessionSelector` requested sessions with wrong dates due to wrong datetime creation logic. 
+
 ### Added
 - `createSameLocalDatetime` method added to provide ability to create same datetime, but in different timezone.
 
