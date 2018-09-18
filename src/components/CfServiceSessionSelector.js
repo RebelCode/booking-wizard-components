@@ -460,8 +460,8 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
       _getDateRange (date) {
         const currentDay = this.createDatetime()
 
-        const firstDayOfRange = this.createDatetime(date).startOf('month')
-        const lastDayOfRange = this.createDatetime(date).endOf('month')
+        const firstDayOfRange = this.createSameLocalDatetime(date).startOf('month')
+        const lastDayOfRange = this.createSameLocalDatetime(date).endOf('month')
 
         const start = (currentDay.isAfter(firstDayOfRange) ? currentDay : firstDayOfRange).startOf('day').format()
         const end = lastDayOfRange.endOf('day').format()
