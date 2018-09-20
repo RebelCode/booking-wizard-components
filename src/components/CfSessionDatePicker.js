@@ -261,6 +261,28 @@ export default function (CreateDatetimeCapable, dateFormats) {
       },
 
       /**
+       * Watch for timezone change, and deselect session and date, if
+       * there are no sessions available on that date.
+       *
+       * @since [*next-version*]
+       */
+      timezone () {
+        if (this.loading) {
+          return
+        }
+
+        const selectedDay = this.selectedDay
+
+        this.$emit('update:session', null)
+        this.$emit('update:selectedDay', null)
+
+        // select day again, if there are some sessions on that date.
+        if (this.daysWithSessions[selectedDay] && this.daysWithSessions[selectedDay].length) {
+          this.$emit('update:selectedDay', selectedDay)
+        }
+      },
+
+      /**
        * If availableSessions is just loaded but day is already selected,
        * emit selection day event again to fulfill data.
        *
