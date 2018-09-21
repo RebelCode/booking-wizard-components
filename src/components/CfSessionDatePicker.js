@@ -142,15 +142,27 @@ export default function (CreateDatetimeCapable, dateFormats) {
        */
       selectedDayProxy: {
         get () {
+          if (!this.selectedDay) {
+            return null
+          }
+
           /*
            * Timestamp is added due to missing default time in `Date` constructor.
            *
            * Assuming that timezone is LA:
            *
-           * `new Date('2018-09-12') -> Tue Sep 11 2018 18:00:00 GMT-0600
-           * `new Date('2018-09-12 00:00:00') -> Wed Sep 12 2018 00:00:00 GMT-0600
+           * `new Date('2018-09-12') -> Tue Sep 11 2018 18:00:00 GMT-0600`
+           * `new Date('2018-09-12 00:00:00') -> Wed Sep 12 2018 00:00:00 GMT-0600` - in Chrome, in Safari this doesn't work.
+           *
+           * Solution that works in all browsers:
+           * `new Date(2018, 8, 12) -> Wed Sep 12 2018 00:00:00 GMT-0600` - 8 is September index (9), count goes from 0
            */
-          return this.selectedDay + ' 00:00:00'
+          const date = this.selectedDay.split('-')
+          return new Date(
+            Number(date[0]),
+            Number(date[1]) - 1,
+            Number(date[2]),
+          )
         },
         set (value) {
           this.$emit('update:selectedDay', this.createDateString(value))
@@ -278,7 +290,9 @@ export default function (CreateDatetimeCapable, dateFormats) {
 
         // select day again, if there are some sessions on that date.
         if (this.daysWithSessions[selectedDay] && this.daysWithSessions[selectedDay].length) {
-          this.$emit('update:selectedDay', selectedDay)
+          this.$nextTick(() => {
+            this.$emit('update:selectedDay', selectedDay)
+          })
         }
       },
 

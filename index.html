@@ -109,6 +109,7 @@
             <span class="loading-inline" v-if="loading"></span>
         </div>
         <div class="form-row__input exclusions-datepicker">
+            {{ selectedDayProxy }}
             <datepicker v-model="selectedDayProxy"
                         :inline="true"
                         @changedMonth="onMonthChange"
@@ -280,7 +281,7 @@
           datetime: {
             'tzFree': 'YYYY-MM-DD HH:mm:ss',
             'store': 'YYYY-MM-DDTHH:mm:ssZ',
-            'sessionTime': 'h:mm a',
+            'sessionTime': 'YYYY-MM-DD HH:mm',
             'dayFull': 'dddd Do MMMM YYYY',
             'dayShort': 'D MMMM YYYY',
             'monthKey': 'YYYY-MM',
