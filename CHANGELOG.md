@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+## [0.1.11] - 2018-09-21
+### Fixed
+- Sessions are refreshed for selected date after switching timezones.
+- Selected date is correctly highlighted in Safari now.
+
 ## [0.1.10] - 2018-09-20
 ### Added
 - Selected date is unselected on timezone change.
