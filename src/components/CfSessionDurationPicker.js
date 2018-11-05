@@ -82,10 +82,11 @@ export default function () {
        * @return {string} String representing duration, human readable.
        */
       sessionTypeLabel (sessionType) {
-        return this.humanizeDuration(sessionType.data.duration * 1000, {
+        const duration = this.humanizeDuration(sessionType.data.duration * 1000, {
           units: ['w', 'd', 'h', 'm'],
           round: true
         })
+        return !!sessionType.label ? `${sessionType.label} (${duration})` : duration
       },
     }
   }
