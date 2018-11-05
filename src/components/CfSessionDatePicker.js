@@ -98,9 +98,9 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
-       * @property {object|null} selectedSessionLength Selected session length object.
+       * @property {object|null} selectedSessionType Selected session type object.
        */
-      selectedSessionLength: {
+      selectedSessionType: {
         default: null
       },
 
@@ -180,7 +180,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
         let daysWithSessions = {}
 
         const sessions = this.availableSessions
-          .filter(session => session.duration === this.selectedSessionLength.sessionLength)
+          .filter(session => session.duration === this.selectedSessionType.data.duration)
 
         for (let session of sessions) {
           const sessionDays = this._getSessionDays(session)
@@ -262,7 +262,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        *
        * @since [*next-version*]
        */
-      selectedSessionLength: {
+      selectedSessionType: {
         deep: true,
         handler () {
           if (!this.loading) {

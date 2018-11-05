@@ -139,9 +139,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         /**
          * @since [*next-version*]
          *
-         * @property {object} sessionDuration Selected session duration
+         * @property {object} sessionType Selected session duration
          */
-        sessionDuration: null,
+        sessionType: null,
 
         /**
          * @since [*next-version*]
@@ -159,7 +159,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       service () {
-        this.sessionDuration = null
+        this.sessionType = null
         this.$nextTick(this._setCleanStateValues)
       },
 
@@ -257,10 +257,10 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @return {boolean}
        */
       isDailyDuration () {
-        if (!this.sessionDuration) {
+        if (!this.sessionType) {
           return false
         }
-        return this.sessionDuration.sessionLength >= 86400
+        return this.sessionType.data.duration >= 86400
       }
     },
     /**
@@ -300,8 +300,8 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        */
       initShowMode () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
-        this.sessionDuration = this.service.sessionLengths.find(sessionLength => {
-          return sessionLength.sessionLength === this.preloadedSession.duration
+        this.sessionType = this.service.sessionTypes.find(sessionType => {
+          return sessionType.data.duration === this.preloadedSession.duration
         })
         this.sessions = [this.preloadedSession]
 

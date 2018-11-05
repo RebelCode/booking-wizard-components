@@ -65,7 +65,7 @@ export default function () {
         immediate: true,
         handler () {
           if (!this.valueProxy) {
-            this.valueProxy = this.service.sessionLengths[0]
+            this.valueProxy = this.service.sessionTypes[0]
           }
         }
       }
@@ -77,12 +77,12 @@ export default function () {
        *
        * @since [*next-version*]
        *
-       * @param {object} sessionLength Session length.
+       * @param {object} sessionType Session type.
        *
        * @return {string} String representing duration, human readable.
        */
-      sessionLengthLabel (sessionLength) {
-        return this.humanizeDuration(sessionLength.sessionLength * 1000, {
+      sessionTypeLabel (sessionType) {
+        return this.humanizeDuration(sessionType.data.duration * 1000, {
           units: ['w', 'd', 'h', 'm'],
           round: true
         })
