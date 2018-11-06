@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
+## [0.1.12] - 2018-11-06
+### Changed
+- Using updated structure of services. `sessionLenths` key is changed to `sessionTypes`.
+
 ## [0.1.11] - 2018-09-21
 ### Fixed
 - Sessions are refreshed for selected date after switching timezones.
