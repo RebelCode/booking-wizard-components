@@ -58,9 +58,9 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
-       * @property {object|null} selectedSessionLength Selected session length object.
+       * @property {object|null} selectedSessionType Selected session length object.
        */
-      selectedSessionLength: null,
+      selectedSessionType: null,
     },
 
     computed: {
@@ -74,8 +74,8 @@ export default function (CreateDatetimeCapable, dateFormats) {
       visibleSessions () {
         return this.sessions
           .filter((session) => {
-            return !!this.selectedSessionLength
-              && session.duration === this.selectedSessionLength.sessionLength
+            return !!this.selectedSessionType
+              && session.duration === this.selectedSessionType.data.duration
           })
           .sort((a, b) => (a.startUnix - b.startUnix))
       },
