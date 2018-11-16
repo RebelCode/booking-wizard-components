@@ -54,13 +54,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
       timezone: {
         default: null
       },
-
-      /**
-       * @since [*next-version*]
-       *
-       * @property {object|null} selectedSessionType Selected session length object.
-       */
-      selectedSessionType: null,
     },
 
     computed: {
@@ -72,12 +65,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
        * @return {object[]}
        */
       visibleSessions () {
-        return this.sessions
-          .filter((session) => {
-            return !!this.selectedSessionType
-              && session.duration === this.selectedSessionType.data.duration
-          })
-          .sort((a, b) => (a.startUnix - b.startUnix))
+        return this.sessions.sort((a, b) => (a.startUnix - b.startUnix))
       },
     },
 

@@ -98,15 +98,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
       /**
        * @since [*next-version*]
        *
-       * @property {object|null} selectedSessionType Selected session type object.
-       */
-      selectedSessionType: {
-        default: null
-      },
-
-      /**
-       * @since [*next-version*]
-       *
        * @property {object[]} sessions List of all sessions available for current month.
        */
       availableSessions: {
@@ -179,10 +170,7 @@ export default function (CreateDatetimeCapable, dateFormats) {
       daysWithSessions () {
         let daysWithSessions = {}
 
-        const sessions = this.availableSessions
-          .filter(session => session.duration === this.selectedSessionType.data.duration)
-
-        for (let session of sessions) {
+        for (let session of this.availableSessions) {
           const sessionDays = this._getSessionDays(session)
 
           for (let sessionDay of sessionDays) {
@@ -255,21 +243,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
         this.$emit('input', selectedDaySessions)
         this.$emit('update:nextAvailableDay', this.getNextAvailableDay(value))
         this.$emit('update:prevAvailableDay', this.getPrevAvailableDay(value))
-      },
-
-      /**
-       * Unselect day and session when duration is changed.
-       *
-       * @since [*next-version*]
-       */
-      selectedSessionType: {
-        deep: true,
-        handler () {
-          if (!this.loading) {
-            this.$emit('update:session', null)
-            this.$emit('update:selectedDay', null)
-          }
-        }
       },
 
       /**

@@ -46,11 +46,11 @@
                 <h1>LOADING...</h1>
             </div>
             <div>
-                <div><code>selected session duration: {{ sessionType }}</code></div>
-                <session-duration-picker
-                        v-model="sessionType"
-                        :service="service"
-                ></session-duration-picker>
+                {{ durationFilterValues }}
+                <div><code>selected session duration: {{ filter }}</code></div>
+                <select v-model="filter.duration">
+                    <option :value="value" v-for="(label, value) of durationFilterValues">{{ label }}</option>
+                </select>
             </div>
             <div>
                 <div><code>OPENED ON DATE: {{ openedOnDate}}</code></div>
@@ -62,8 +62,7 @@
                         :session.sync="session"
                         :loading="isSessionsLoading"
                         :timezone="timezone"
-                        :selected-session-type="sessionType"
-                        :available-sessions="sessions"
+                        :available-sessions="filteredSessions"
                         :prev-available-day.sync="prevAvailableDay"
                         :next-available-day.sync="nextAvailableDay"
                         @changedMonth="loadSessions"
@@ -82,7 +81,6 @@
                             ></date-navigator>
                             <session-time-picker
                                     :selected-day.sync="selectedDay"
-                                    :selected-session-type="sessionType"
                                     :service="service"
                                     :timezone="timezone"
                                     :sessions="selectedDaySessions"
@@ -190,8 +188,8 @@
             return {
               services: [
                 {"id":64,"name":"Yoga lessons","description":"","imageSrc":"http:\/\/scotchbox.local\/app\/uploads\/2018\/10\/\u0417\u043d\u0456\u043c\u043e\u043a-\u0435\u043a\u0440\u0430\u043d\u0430-2018-10-19-\u043e-15.20.26.png","sessionTypes":[{"id":"d40d19095888b7fd31f3f1da57a62e72","type":"fixed_duration","label":"Cool","price":{"amount":"45","currency":"USD","formatted":"$45.00"},"data":{"duration":1800}},{"id":"d8bd9ca7a8a4a9db8c94fcecb4ce8669","type":"fixed_duration","label":"","price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":3600}},{"id":"e51e2c0a6eb85204048d5306feab4914","type":"fixed_duration","label":"","price":{"amount":"199","currency":"USD","formatted":"$199.00"},"data":{"duration":7200}}],"timezone":"Europe\/Kiev","displayOptions":{"allowCustomerChangeTimezone":false}},
-                  {"id":62,"name":"simple","description":"","imageSrc":false,"sessionTypes":[{"id":"ff431d10fa3aa5dc23afb58479bc9122","type":"fixed_duration","label":"","price":{"amount":"45","currency":"USD","formatted":"$45.00"},"data":{"duration":3600}},{"id":"e43c27d014a194ca900d8ef5862cb6d3","type":null,"label":null,"price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":10800}}],"timezone":"Europe\/Kiev","displayOptions":{"allowCustomerChangeTimezone":false}}],
-              service: null,//{"id":64,"name":"Yoga lessons","description":"","imageSrc":"http:\/\/scotchbox.local\/app\/uploads\/2018\/10\/\u0417\u043d\u0456\u043c\u043e\u043a-\u0435\u043a\u0440\u0430\u043d\u0430-2018-10-19-\u043e-15.20.26.png","sessionTypes":[{"id":"d40d19095888b7fd31f3f1da57a62e72","type":"fixed_duration","label":"","price":{"amount":"45","currency":"USD","formatted":"$45.00"},"data":{"duration":1800}},{"id":"d8bd9ca7a8a4a9db8c94fcecb4ce8669","type":"fixed_duration","label":"","price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":3600}},{"id":"e51e2c0a6eb85204048d5306feab4914","type":"fixed_duration","label":"","price":{"amount":"199","currency":"USD","formatted":"$199.00"},"data":{"duration":7200}}],"timezone":"Europe\/Kiev","displayOptions":{"allowCustomerChangeTimezone":false}},
+                  {"id":62,"name":"simple","description":"","imageSrc":false,"sessionTypes":[{"id":"ff431d10fa3aa5dc23afb58479bc9122","type":"fixed_duration","label":"","price":{"amount":"45","currency":"USD","formatted":"$45.00"},"data":{"duration":3600}},{"id":"e43c27d014a194ca900d8ef5862cb6d3","type":null,"label":null,"price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":7200}}],"timezone":"Europe\/Kiev","displayOptions":{"allowCustomerChangeTimezone":false}}],
+              service: {"id":64,"name":"Yoga lessons","description":"","imageSrc":"http:\/\/scotchbox.local\/app\/uploads\/2018\/10\/\u0417\u043d\u0456\u043c\u043e\u043a-\u0435\u043a\u0440\u0430\u043d\u0430-2018-10-19-\u043e-15.20.26.png","sessionTypes":[{"id":"d40d19095888b7fd31f3f1da57a62e72","type":"fixed_duration","label":"Cool","price":{"amount":"45","currency":"USD","formatted":"$45.00"},"data":{"duration":1800}},{"id":"d8bd9ca7a8a4a9db8c94fcecb4ce8669","type":"fixed_duration","label":"","price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":3600}},{"id":"e51e2c0a6eb85204048d5306feab4914","type":"fixed_duration","label":"","price":{"amount":"199","currency":"USD","formatted":"$199.00"},"data":{"duration":7200}}],"timezone":"Europe\/Kiev","displayOptions":{"allowCustomerChangeTimezone":false}},
               session: null ,
               // session: {
               //   start: "2018-10-13T00:00:00+00:00",
@@ -236,9 +234,13 @@
         return dependencies.bookingWizardComponents.MfCreateDatetimeCapable(container.moment)
       })
 
+      di.factory('SessionsFilterCapable', function (container) {
+        return dependencies.bookingWizardComponents.MfSessionsFilterCapable(container.moment)
+      })
+
       di.factory('service-session-selector', function (container) {
         console.info(dependencies)
-        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.CreateDatetimeCapable, container.sessionApi, container.config.datetime)
+        return dependencies.bookingWizardComponents.CfServiceSessionSelector(container.CreateDatetimeCapable, container.SessionsFilterCapable, container.sessionApi, container.config.datetime)
       })
 
       di.factory('session-time-picker', function (container) {
@@ -247,10 +249,6 @@
 
       di.factory('date-navigator', function (container) {
         return dependencies.bookingWizardComponents.CfDateNavigator(container.CreateDatetimeCapable, container.config.datetime)
-      })
-
-      di.factory('session-duration-picker', function (container) {
-        return dependencies.bookingWizardComponents.CfSessionDurationPicker()
       })
 
       di.factory('session-date-picker', function (container) {
