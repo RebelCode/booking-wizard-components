@@ -96,7 +96,6 @@ export default function (CreateDatetimeCapable, dateFormats) {
         return this.value
           && this.value.start === session.start
           && this.value.end === session.end
-          && this.value.resource === session.resource
       },
 
       /**

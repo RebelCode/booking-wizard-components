@@ -1,5 +1,9 @@
+import DurationFilter from './filters/DurationFilter'
+import StaffMembersFilter from './filters/StaffMembersFilter'
+
 export default function MfSessionsFilterCapable () {
   return {
+    mixins: [ DurationFilter, StaffMembersFilter ],
     data () {
       return {
         /**
@@ -74,6 +78,42 @@ export default function MfSessionsFilterCapable () {
       }
     },
     methods: {
+      /**
+       * Get all possible values for the filter.
+       *
+       * @since [*next-version*]
+       *
+       * @param {string} filter The filter's name.
+       *
+       * @return {object<string, string>} Possible values of the filter.
+       */
+      getFilterValues (filter) {
+        return this[`${filter}FilterValues`]
+      },
+
+      /**
+       * Whether the filter has possible values.
+       *
+       * @since [*next-version*]
+       *
+       * @param {string} filter The filter's name.
+       *
+       * @return {boolean}
+       */
+      hasFilterValues (filter) {
+        return !!Object.keys(this[`${filter}FilterValues`]).length
+      },
+
+      /**
+       * Filter session type against previous filters.
+       *
+       * @since [*next-version*]
+       *
+       * @param {string} filterType Filter's name.
+       * @param {ServiceSessionType} sessionType The session type.
+       *
+       * @return {boolean}
+       */
       filterAgainstPreviousFilters (filterType, sessionType) {
         const currentFilterPosition = this.filters.indexOf(filterType)
         const filtersBefore = this.filters.slice(0, currentFilterPosition)

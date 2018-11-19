@@ -33,7 +33,7 @@ export default {
       let staff = []
 
       for (let sessionType of this.service.sessionTypes.filter(sessionType => this.filterAgainstPreviousFilters('staffMember', sessionType))) {
-        let staffMembers = sessionType.data.resources.filter(resource => resource.type === 'staff')
+        let staffMembers = (sessionType.data.resources || []).filter(resource => resource.type === 'staff')
         for (let staffMember of staffMembers) {
           if (!staff.find(member => member.id === staffMember.id)) {
             staff.push(staffMember)

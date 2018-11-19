@@ -62,12 +62,12 @@
                 <div><code>OPENED ON DATE: {{ openedOnDate}}</code></div>
                 <session-date-picker
                         v-model="selectedDaySessions"
+                        :timezone="timezone"
                         :is-daily-duration="isDailyDuration"
                         :selected-day.sync="selectedDay"
                         :opened-on-date.sync="openedOnDate"
                         :session.sync="session"
                         :loading="isSessionsLoading"
-                        :timezone="timezone"
                         :available-sessions="filteredSessions"
                         :prev-available-day.sync="prevAvailableDay"
                         :next-available-day.sync="nextAvailableDay"
