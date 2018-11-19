@@ -1,8 +1,5 @@
 export default function MfSessionsFilterCapable () {
   return {
-    inject: [
-      'humanizeDuration'
-    ],
     data () {
       return {
         /**
@@ -13,6 +10,18 @@ export default function MfSessionsFilterCapable () {
         filter: {
           duration: null,
           staffMember: null
+        }
+      }
+    },
+    props: {
+      /**
+       * Ordered list of filters.
+       *
+       * @since [*next-version*]
+       */
+      filters: {
+        default () {
+          return [ 'duration', 'staffMember' ]
         }
       }
     },
@@ -27,7 +36,7 @@ export default function MfSessionsFilterCapable () {
         immediate: true,
         handler () {
           this.$nextTick(() => {
-            for (const key of Object.keys(this.filter)) {
+            for (const key of this.filters) {
               if (!this[`${key}FilterValues`]) {
                 continue
               }
@@ -52,39 +61,6 @@ export default function MfSessionsFilterCapable () {
     },
     computed: {
       /**
-       * @var {number|boolean} selectedSessionDuration Selected session duration.
-       *
-       * @since [*next-version*]
-       */
-      selectedSessionDuration () {
-        if (!this.filter.duration) {
-          return false
-        }
-        const selectedSession = this.service.sessionTypes.find(sessionType => sessionType.id === this.filter.duration)
-        return selectedSession ? selectedSession.data.duration : false
-      },
-
-      /**
-       * @var {object<string, string>} durationFilterValues List of values for session duration.
-       *
-       * @since [*next-version*]
-       */
-      durationFilterValues () {
-        const sessionTypeLabel = sessionType => {
-          const duration = this.humanizeDuration(sessionType.data.duration * 1000, {
-            units: ['w', 'd', 'h', 'm'],
-            round: true
-          })
-          return !!sessionType.label ? `${sessionType.label} (${duration})` : duration
-        }
-
-        return this.service.sessionTypes.reduce((acc, sessionType) => {
-          acc[sessionType.id] = sessionTypeLabel(sessionType)
-          return acc
-        }, {})
-      },
-
-      /**
        * @var {BookingSession[]} filteredSessions List of sessions that passes all filters.
        *
        * @since [*next-version*]
@@ -98,29 +74,20 @@ export default function MfSessionsFilterCapable () {
       }
     },
     methods: {
-      /**
-       * Check whether the session passes the duration filter.
-       *
-       * @since [*next-version*]
-       *
-       * @param {BookingSession} session Session to check.
-       *
-       * @return {boolean} Whether the session passes the duration filter.
-       */
-      durationFilterPassed (session) {
-        return session.duration === this.selectedSessionDuration
-      },
+      filterAgainstPreviousFilters (filterType, sessionType) {
+        const currentFilterPosition = this.filters.indexOf(filterType)
+        const filtersBefore = this.filters.slice(0, currentFilterPosition)
 
-      /**
-       * Check whether the session passes the staff member filter.
-       *
-       * @since [*next-version*]
-       *
-       * @param {BookingSession} session Session to check.
-       *
-       * @return {boolean} Whether the session passes the staff member filter.
-       */
-      staffMemberFilterPassed (session) {
+        for (let checkingFilter of filtersBefore) {
+          const values = !!this[`${checkingFilter}FilterValues`].length
+          if (!values) {
+            return true
+          }
+          let checkResult = !!this[`${checkingFilter}InSessionType`] ? this[`${checkingFilter}InSessionType`](this.filter[checkingFilter], sessionType) : true
+          if (!checkResult) {
+            return false
+          }
+        }
         return true
       },
 
@@ -132,11 +99,11 @@ export default function MfSessionsFilterCapable () {
        * @param {BookingSession} session
        */
       selectFilters (session) {
-        for (const key of Object.keys(this.filter)) {
+        for (const key of this.filters) {
           if (!this[`${key}FilterValues`] || !this[`${key}FilterValues`].length) {
             continue
           }
-          // this.filter[key] = Object.keys(this[`${key}FilterValues`]).find(value => this[`${key}FilterPassed`](session))
+          this.filter[key] = Object.keys(this[`${key}FilterValues`]).find(value => this[`${key}FilterCorrespondsToSession`](value, session))
         }
       }
     }
