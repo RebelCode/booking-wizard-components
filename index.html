@@ -188,104 +188,13 @@
       })
 
       di.factory('app', function () {
+        var services = [{"id":111,"name":"Yoga service","description":"Good.","imageSrc":false,"sessionTypes":[{"id":"032c688122de963b0926423ef3a3d011","type":"fixed_duration","label":"","price":{"amount":"99","currency":"USD","formatted":"$99.00"},"data":{"duration":3600,"resources":[{"id":"112","name":"Roma Lytvynenko","type":"staff","data":{"imageId":80,"imageSrc":"http:\/\/scotchbox.local\/app\/uploads\/2018\/11\/12719453_1001792049891557_6297052143634598851_o.jpg","imageUrl":"http:\/\/scotchbox.local\/app\/uploads\/2018\/11\/12719453_1001792049891557_6297052143634598851_o.jpg"},"availability":{"rules":[{"id":"16","start":"2018-11-28T06:00:00+00:00","end":"2018-11-28T20:00:00+00:00","isAllDay":false,"repeat":true,"repeatPeriod":"1","repeatUnit":"weeks","repeatUntil":"period","repeatUntilPeriod":"100","repeatUntilDate":"1970-01-01T00:00:00+00:00","repeatWeeklyOn":["wednesday","monday","tuesday","friday","thursday"],"repeatMonthlyOn":[],"excludeDates":[]}],"timezone":"UTC"}}]}}],"timezone":"UTC","displayOptions":{"allowCustomerChangeTimezone":false}}]
         return {
           inject: ['service-session-selector', 'moment'],
           data: function () {
             return {
-              services: [
-                {
-                  'id': 64,
-                  'name': 'Yoga lessons',
-                  'description': '',
-                  'imageSrc': 'http:\/\/scotchbox.local\/app\/uploads\/2018\/10\/\u0417\u043d\u0456\u043c\u043e\u043a-\u0435\u043a\u0440\u0430\u043d\u0430-2018-10-19-\u043e-15.20.26.png',
-                  'sessionTypes': [{
-                    'id': 'd40d19095888b7fd31f3f1da57a62e72',
-                    'type': 'fixed_duration',
-                    'label': 'Cool',
-                    'price': {'amount': '45', 'currency': 'USD', 'formatted': '$45.00'},
-                    'data': {'duration': 1800}
-                  }, {
-                    'id': 'd8bd9ca7a8a4a9db8c94fcecb4ce8669',
-                    'type': 'fixed_duration',
-                    'label': '',
-                    'price': {'amount': '99', 'currency': 'USD', 'formatted': '$99.00'},
-                    'data': {'duration': 3600}
-                  }, {
-                    'id': 'e51e2c0a6eb85204048d5306feab4914',
-                    'type': 'fixed_duration',
-                    'label': '',
-                    'price': {'amount': '199', 'currency': 'USD', 'formatted': '$199.00'},
-                    'data': {'duration': 7200}
-                  }],
-                  'timezone': 'Europe\/Kiev',
-                  'displayOptions': {'allowCustomerChangeTimezone': false}
-                },
-                {
-                  'id': 62,
-                  'name': 'simple',
-                  'description': '',
-                  'imageSrc': false,
-                  'sessionTypes': [{
-                    'id': 'ff431d10fa3aa5dc23afb58479bc9122',
-                    'type': 'fixed_duration',
-                    'label': '',
-                    'price': {'amount': '45', 'currency': 'USD', 'formatted': '$45.00'},
-                    'data': {
-                      'duration': 3600,
-                      'resources': [{
-                        id: 1,
-                        name: 'roman',
-                        type: 'staff'
-                      }, {
-                        id: 2,
-                        name: 'dmytrii',
-                        type: 'staff'
-                      }]
-                    }
-                  }, {
-                    'id': 'e43c27d014a194ca900d8ef5862cb6d3',
-                    'type': null,
-                    'label': null,
-                    'price': {'amount': '99', 'currency': 'USD', 'formatted': '$99.00'},
-                    'data': {
-                      'duration': 7200,
-                      'resources': [{
-                        id: 2,
-                        name: 'dmytrii',
-                        type: 'staff'
-                      }]
-                    }
-                  }],
-                  'timezone': 'Europe\/Kiev',
-                  'displayOptions': {'allowCustomerChangeTimezone': false}
-                }],
-              service: {
-                'id': 62,
-                'name': 'simple',
-                'description': '',
-                'imageSrc': false,
-                'sessionTypes': [{
-                  'id': 'ff431d10fa3aa5dc23afb58479bc9122',
-                  'type': 'fixed_duration',
-                  'label': '',
-                  'price': {'amount': '45', 'currency': 'USD', 'formatted': '$45.00'},
-                  'data': {
-                    'duration': 3600,
-                    'resources': []
-                  }
-                }, {
-                  'id': 'e43c27d014a194ca900d8ef5862cb6d3',
-                  'type': null,
-                  'label': null,
-                  'price': {'amount': '99', 'currency': 'USD', 'formatted': '$99.00'},
-                  'data': {
-                    'duration': 7200,
-                    'resources': []
-                  }
-                }],
-                'timezone': 'Europe\/Kiev',
-                'displayOptions': {'allowCustomerChangeTimezone': false}
-              },
+              services: services,
+              service: services[0],
               session: null ,
               // session: {
               //   start: "2018-10-13T00:00:00+00:00",

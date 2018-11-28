@@ -46,6 +46,10 @@ export default {
      * @since [*next-version*]
      */
     durationFilterValues () {
+      if (!this.service) {
+        return []
+      }
+
       const sessionTypeLabel = sessionType => {
         const duration = this.humanizeDuration(sessionType.data.duration * 1000, {
           units: ['w', 'd', 'h', 'm'],

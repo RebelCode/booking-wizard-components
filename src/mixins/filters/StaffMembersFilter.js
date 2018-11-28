@@ -30,6 +30,10 @@ export default {
      * @since [*next-version*]
      */
     staffMemberFilterValues () {
+      if (!this.service) {
+        return []
+      }
+
       let staff = []
 
       for (let sessionType of this.service.sessionTypes.filter(sessionType => this.filterAgainstPreviousFilters('staffMember', sessionType))) {
@@ -58,7 +62,7 @@ export default {
      * @return {boolean} Whether the session passes the staff member filter.
      */
     staffMemberFilterPassed (session) {
-      return Number(session.resource) === Number(this.filter.staffMember)
+      return session.resources.indexOf(this.filter.staffMember) > -1
     },
 
     /**
