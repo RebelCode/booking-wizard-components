@@ -39,7 +39,7 @@ export default function MfSessionsFilterCapable () {
       service: {
         immediate: true,
         handler () {
-          if (this.isEditModeAvailable && !this.isEditing) { // wrong
+          if (!this.isMounted || (this.isEditModeAvailable && !this.isEditing)) { // wrong
             return
           }
           this.$nextTick(() => {
@@ -61,7 +61,7 @@ export default function MfSessionsFilterCapable () {
       filter: {
         deep: true,
         handler () {
-          if (this.isSeeding) {
+          if (!this.isMounted) {
             return
           }
           this.session = null
@@ -145,16 +145,12 @@ export default function MfSessionsFilterCapable () {
        * @param {BookingSession} session
        */
       selectFilters (session) {
-        this.isSeeding = true
         for (const key of this.filters) {
           if (!this[`${key}FilterValues`] || !Object.keys(this[`${key}FilterValues`]).length) {
             continue
           }
           this.filter[key] = Object.keys(this[`${key}FilterValues`]).find(value => this[`${key}FilterCorrespondsToSession`](value, session))
         }
-        this.$nextTick(() => {
-          this.isSeeding = false
-        })
       }
     }
   }

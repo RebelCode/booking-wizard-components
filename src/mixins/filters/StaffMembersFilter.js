@@ -14,7 +14,7 @@ export default {
      * @param {string} oldValue
      */
     'filter.staffMember' (newValue, oldValue) {
-      if (this.isSeeding || !newValue || !oldValue) {
+      if (!newValue || !oldValue) {
         return
       }
       const filtersAfterCurrent = this.filters.slice(this.filters.indexOf('staffMember') + 1)

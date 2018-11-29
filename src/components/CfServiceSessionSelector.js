@@ -139,9 +139,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, Session
         /**
          * @since [*next-version*]
          *
-         * @property {boolean} isMounted Whether component's data is seeding.
+         * @property {boolean} isMounted Whether component is mounted.
          */
-        isSeeding: true
+        isMounted: false
       }
     },
     /**
@@ -151,7 +151,7 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, Session
      */
     mounted () {
       this.$nextTick(() => {
-        this.isSeeding = false
+        this.isMounted = true
       })
     },
     watch: {
@@ -305,7 +305,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, Session
        */
       initShowMode () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
-
         this.selectFilters(this.preloadedSession)
 
         this.sessions = [this.preloadedSession]
