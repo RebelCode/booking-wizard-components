@@ -119,7 +119,7 @@ export default function MfSessionsFilterCapable () {
         const filtersBefore = this.filters.slice(0, currentFilterPosition)
 
         for (let checkingFilter of filtersBefore) {
-          const values = !!this[`${checkingFilter}FilterValues`].length
+          const values = !!Object.keys(this[`${checkingFilter}FilterValues`]).length
           if (!values) {
             return true
           }
