@@ -42,12 +42,14 @@ export default function MfSessionsFilterCapable () {
           if (this.value) {
             return
           }
-          for (const key of this.filters) {
-            if (!this[`${key}FilterValues`]) {
-              continue
+          this.$nextTick(() => {
+            for (const key of this.filters) {
+              if (!this[`${key}FilterValues`]) {
+                continue
+              }
+              this.filter[key] = Object.keys(this[`${key}FilterValues`])[0]
             }
-            this.filter[key] = Object.keys(this[`${key}FilterValues`])[0]
-          }
+          })
         }
       },
 
