@@ -135,7 +135,24 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, Session
          * @property {Date} openedOnDate Date, on which datepicker is opened.
          */
         openedOnDate: this.createLocalDatetime().toDate(),
+
+        /**
+         * @since [*next-version*]
+         *
+         * @property {boolean} isMounted Whether component's data is seeding.
+         */
+        isSeeding: true
       }
+    },
+    /**
+     * Set isSeeding flag when component is mounted.
+     *
+     * @since [*next-version*]
+     */
+    mounted () {
+      this.$nextTick(() => {
+        this.isSeeding = false
+      })
     },
     watch: {
       /**

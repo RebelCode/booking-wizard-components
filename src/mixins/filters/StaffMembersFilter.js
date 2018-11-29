@@ -14,7 +14,7 @@ export default {
      * @param {string} oldValue
      */
     'filter.staffMember' (newValue, oldValue) {
-      if (!newValue || !oldValue) {
+      if (this.isSeeding || !newValue || !oldValue) {
         return
       }
       const filtersAfterCurrent = this.filters.slice(this.filters.indexOf('staffMember') + 1)
@@ -76,7 +76,7 @@ export default {
      * @return {boolean}
      */
     staffMemberFilterCorrespondsToSession (filterValue, session) {
-      return Number(session.data.duration) === Number(filterValue)
+      return session.resources.indexOf(filterValue) > -1
     },
 
     /**

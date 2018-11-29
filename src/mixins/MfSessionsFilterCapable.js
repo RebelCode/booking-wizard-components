@@ -39,14 +39,15 @@ export default function MfSessionsFilterCapable () {
       service: {
         immediate: true,
         handler () {
-          this.$nextTick(() => {
-            for (const key of this.filters) {
-              if (!this[`${key}FilterValues`]) {
-                continue
-              }
-              this.filter[key] = Object.keys(this[`${key}FilterValues`])[0]
+          if (this.value) {
+            return
+          }
+          for (const key of this.filters) {
+            if (!this[`${key}FilterValues`]) {
+              continue
             }
-          })
+            this.filter[key] = Object.keys(this[`${key}FilterValues`])[0]
+          }
         }
       },
 
@@ -58,6 +59,9 @@ export default function MfSessionsFilterCapable () {
       filter: {
         deep: true,
         handler () {
+          if (this.isSeeding) {
+            return
+          }
           this.session = null
           this.selectedDay = null
         }
@@ -139,12 +143,16 @@ export default function MfSessionsFilterCapable () {
        * @param {BookingSession} session
        */
       selectFilters (session) {
+        this.isSeeding = true
         for (const key of this.filters) {
-          if (!this[`${key}FilterValues`] || !this[`${key}FilterValues`].length) {
+          if (!this[`${key}FilterValues`] || !Object.keys(this[`${key}FilterValues`]).length) {
             continue
           }
           this.filter[key] = Object.keys(this[`${key}FilterValues`]).find(value => this[`${key}FilterCorrespondsToSession`](value, session))
+          console.info('selecting filters', {key, values: this[`${key}FilterValues`], selected: this.filter[key]})
         }
+        console.info('result of selecting filter', JSON.parse(JSON.stringify(this.filter)))
+        this.isSeeding = false
       }
     }
   }

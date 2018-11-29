@@ -17,7 +17,7 @@ export default {
      * @param {string} oldValue
      */
     'filter.duration' (newValue, oldValue) {
-      if (!newValue || !oldValue) {
+      if (this.isSeeding || !newValue || !oldValue) {
         return
       }
       const filtersAfterCurrent = this.filters.slice(this.filters.indexOf('duration') + 1)
