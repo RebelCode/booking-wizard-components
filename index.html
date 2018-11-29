@@ -22,10 +22,12 @@
             <select v-model="service">
                 <option :value="iService" v-for="iService of services">{{ iService.name }}</option>
             </select>
-            <service-session-selector :service="service"
-                                      v-model="session"
-                                      :timezone="timezone"
-            ></service-session-selector>
+            <!--<div v-if="service">-->
+                <service-session-selector :service="service"
+                                          v-model="session"
+                                          :timezone="timezone"
+                ></service-session-selector>
+            <!--</div>-->
         </div>
     </app>
 </div>

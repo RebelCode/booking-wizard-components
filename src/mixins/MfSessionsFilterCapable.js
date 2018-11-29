@@ -39,10 +39,22 @@ export default function MfSessionsFilterCapable () {
       service: {
         immediate: true,
         handler () {
-          if (!this.isMounted || (this.isEditModeAvailable && !this.isEditing)) { // wrong
-            return
+          const currentFilters = JSON.parse(JSON.stringify(this.filter))
+
+          const areFiltersEmpty = (f) => {
+            return this.filters.reduce((isEmpty, key) => {
+              console.info(f, f[key], isEmpty)
+              return isEmpty && !f[key]
+            }, true)
           }
+
           this.$nextTick(() => {
+            const nextFilters = JSON.parse(JSON.stringify(this.filter))
+
+            if (areFiltersEmpty(currentFilters) && !areFiltersEmpty(nextFilters)) {
+              return
+            }
+
             for (const key of this.filters) {
               if (!this[`${key}FilterValues`]) {
                 continue
