@@ -149,10 +149,10 @@ export default function MfSessionsFilterCapable () {
             continue
           }
           this.filter[key] = Object.keys(this[`${key}FilterValues`]).find(value => this[`${key}FilterCorrespondsToSession`](value, session))
-          console.info('selecting filters', {key, values: this[`${key}FilterValues`], selected: this.filter[key]})
         }
-        console.info('result of selecting filter', JSON.parse(JSON.stringify(this.filter)))
-        this.isSeeding = false
+        this.$nextTick(() => {
+          this.isSeeding = false
+        })
       }
     }
   }
