@@ -39,7 +39,7 @@ export default function MfSessionsFilterCapable () {
       service: {
         immediate: true,
         handler () {
-          if (this.value) {
+          if (this.isEditModeAvailable && !this.isEditing) { // wrong
             return
           }
           this.$nextTick(() => {
