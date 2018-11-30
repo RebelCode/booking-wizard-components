@@ -133,7 +133,7 @@
              @click="select(session)"
              :class="['session-picker-button', isSelected(session) ? 'session-picker-button--selected' : '']"
         >
-            {{ sessionLabel(session) }}
+            {{ sessionLabel(session) }} [{{ session.duration }}]
         </div>
     </div>
 </script>
@@ -142,18 +142,6 @@
         <button :disabled="prevAvailableDay ? false : 'disabled'" @click="goToPrevDay">Prev</button>
         <span>{{ selectedDaySessionsLabel }}</span>
         <button :disabled="nextAvailableDay ? false : 'disabled'" @click="goToNextDay">Next</button>
-    </div>
-</script>
-<script type="text/x-template" id="session-duration-picker-template">
-    <div class="form-row">
-        <div class="form-row__label form-row__label--smaller">Duration</div>
-        <div class="form-row__input">
-            <select v-model="valueProxy" style="width: 100%">
-                <option :value="sessionType" v-for="sessionType in service.sessionTypes">
-                    {{ sessionTypeLabel(sessionType) }}
-                </option>
-            </select>
-        </div>
     </div>
 </script>
 <script>

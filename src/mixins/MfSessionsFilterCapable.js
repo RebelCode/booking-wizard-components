@@ -78,8 +78,12 @@ export default function MfSessionsFilterCapable () {
           this.session = null
 
           this.$nextTick(() => {
-            if (!this.hasSessionsOnSelectedDay()) {
-              this.selectedDay = null
+            const selectedDay = this.selectedDay
+            this.selectedDay = null
+            if (this.hasSessionsOnSelectedDay()) {
+              this.$nextTick(() => {
+                this.selectedDay = selectedDay
+              })
             }
           })
         }
