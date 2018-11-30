@@ -76,7 +76,12 @@ export default function MfSessionsFilterCapable () {
             return
           }
           this.session = null
-          this.selectedDay = null
+
+          this.$nextTick(() => {
+            if (!this.hasSessionsOnSelectedDay()) {
+              this.selectedDay = null
+            }
+          })
         }
       },
     },
@@ -95,6 +100,17 @@ export default function MfSessionsFilterCapable () {
       }
     },
     methods: {
+      /**
+       * Whether there are some sessions on selected day.
+       *
+       * @since [*next-version*]
+       *
+       * @return {boolean}
+       */
+      hasSessionsOnSelectedDay () {
+        return !!this.selectedDaySessions.length
+      },
+
       /**
        * Get all possible values for the filter.
        *

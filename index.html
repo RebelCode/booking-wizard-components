@@ -26,7 +26,6 @@
                 <service-session-selector :service="service"
                                           v-model="session"
                                           :timezone="timezone"
-                                          :filters="['staffMember','duration']"
                 ></service-session-selector>
             <!--</div>-->
         </div>
@@ -50,14 +49,14 @@
             <div>
                 <pre>{{ filter }}</pre>
 
-                <pre>{{ staffMemberFilterValues }}</pre>
-                <select v-model="filter.staffMember">
-                    <option :value="value" v-for="(label, value) of staffMemberFilterValues">{{ label }}</option>
-                </select>
-
                 <pre>{{ durationFilterValues }}</pre>
                 <select v-model="filter.duration">
                     <option :value="value" v-for="(label, value) of durationFilterValues">{{ label }}</option>
+                </select>
+
+                <pre>{{ staffMemberFilterValues }}</pre>
+                <select v-model="filter.staffMember">
+                    <option :value="value" v-for="(label, value) of staffMemberFilterValues">{{ label }}</option>
                 </select>
             </div>
             <div>
