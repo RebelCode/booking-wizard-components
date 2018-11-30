@@ -91,6 +91,7 @@ export default {
      */
     staffMemberInSessionType (resourceId, sessionType) {
       resourceId = Number(resourceId)
+      console.info(resourceId, sessionType, !!sessionType.data.resources.find(resource => Number(resource.id) === resourceId && resource.type === 'staff'))
       return !!sessionType.data.resources.find(resource => Number(resource.id) === resourceId && resource.type === 'staff')
     },
   }

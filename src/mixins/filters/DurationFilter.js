@@ -36,7 +36,7 @@ export default {
       if (!this.filter.duration) {
         return false
       }
-      const selectedSession = this.service.sessionTypes.find(sessionType => sessionType.id === this.filter.duration)
+      const selectedSession = this.service.sessionTypes.find(sessionType => this._getSessionTypeId(sessionType) === this.filter.duration)
       return selectedSession ? selectedSession.data.duration : false
     },
 
@@ -61,12 +61,17 @@ export default {
       return this.service.sessionTypes
         .filter(sessionType => this.filterAgainstPreviousFilters('duration', sessionType))
         .reduce((acc, sessionType) => {
-          acc[sessionType.id] = sessionTypeLabel(sessionType)
+          acc[this._getSessionTypeId(sessionType)] = sessionTypeLabel(sessionType)
           return acc
         }, {})
     },
   },
   methods: {
+    _getSessionTypeId (sessionType) {
+      // console.info({sessionType})
+      return sessionType.label + String(sessionType.data.duration)
+    },
+
     /**
      * Check whether the session passes the duration filter.
      *
@@ -91,7 +96,7 @@ export default {
      * @return {boolean}
      */
     durationFilterCorrespondsToSession (filterValue, session) {
-      const foundSessionType = this.service.sessionTypes.find(trSessionType => trSessionType.id === filterValue)
+      const foundSessionType = this.service.sessionTypes.find(trSessionType => this._getSessionTypeId(trSessionType) === filterValue)
       if (!foundSessionType) {
         return false
       }
@@ -109,11 +114,11 @@ export default {
      * @return {boolean}
      */
     durationInSessionType (sessionTypeId, sessionType) {
-      const foundSessionType = this.service.sessionTypes.find(trSessionType => trSessionType.id === sessionTypeId)
+      const foundSessionType = this.service.sessionTypes.find(trSessionType => this._getSessionTypeId(trSessionType) === sessionTypeId)
       if (!foundSessionType) {
         return false
       }
-      return sessionType.data.duration === foundSessionType.data.duration
+      return this._getSessionTypeId(sessionType) === this._getSessionTypeId(foundSessionType)
     },
   }
 }
