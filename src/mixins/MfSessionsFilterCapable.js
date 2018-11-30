@@ -43,7 +43,6 @@ export default function MfSessionsFilterCapable () {
 
           const areFiltersEmpty = (f) => {
             return this.filters.reduce((isEmpty, key) => {
-              console.info(f, f[key], isEmpty)
               return isEmpty && !f[key]
             }, true)
           }

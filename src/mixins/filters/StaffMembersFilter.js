@@ -91,7 +91,7 @@ export default {
      */
     staffMemberInSessionType (resourceId, sessionType) {
       resourceId = Number(resourceId)
-      return !!sessionType.data.resources.find(resource => resource.id === resourceId && resource.type === 'staff')
+      return !!sessionType.data.resources.find(resource => Number(resource.id) === resourceId && resource.type === 'staff')
     },
   }
 }

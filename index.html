@@ -26,6 +26,7 @@
                 <service-session-selector :service="service"
                                           v-model="session"
                                           :timezone="timezone"
+                                          :filters="['staffMember','duration']"
                 ></service-session-selector>
             <!--</div>-->
         </div>
@@ -49,14 +50,14 @@
             <div>
                 <pre>{{ filter }}</pre>
 
-                <pre>{{ durationFilterValues }}</pre>
-                <select v-model="filter.duration">
-                    <option :value="value" v-for="(label, value) of durationFilterValues">{{ label }}</option>
-                </select>
-
                 <pre>{{ staffMemberFilterValues }}</pre>
                 <select v-model="filter.staffMember">
                     <option :value="value" v-for="(label, value) of staffMemberFilterValues">{{ label }}</option>
+                </select>
+
+                <pre>{{ durationFilterValues }}</pre>
+                <select v-model="filter.duration">
+                    <option :value="value" v-for="(label, value) of durationFilterValues">{{ label }}</option>
                 </select>
             </div>
             <div>
@@ -195,8 +196,8 @@
           data: function () {
             return {
               services: services,
-              service: null,
-              // service: services[1],
+              // service: null,
+              service: services[1],
               session: null ,
               // session: { "id": "65297", "start": "2018-11-30T11:00:00+00:00", "end": "2018-11-30T13:00:00+00:00", "service": 111, "resources": [ "111", "112" ], "duration": 7200, "startUnix": 1543575600 },
               timezone: "America\/Los_Angeles",//this.moment.tz.guess()
