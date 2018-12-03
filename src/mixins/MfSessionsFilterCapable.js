@@ -86,6 +86,8 @@ export default function MfSessionsFilterCapable () {
               })
             }
           })
+
+          this.emitExposedValues()
         }
       },
     },
@@ -104,6 +106,19 @@ export default function MfSessionsFilterCapable () {
       }
     },
     methods: {
+      /**
+       * Emit exposed filter values for further usage.
+       *
+       * @since [*next-version*]
+       */
+      emitExposedValues () {
+        let exposedFilters = {}
+        for (let filter of this.filters) {
+          exposedFilters[filter] = this[`${filter}ExposedValue`]
+        }
+        this.$emit('exposed', exposedFilters)
+      },
+
       /**
        * Whether there are some sessions on selected day.
        *

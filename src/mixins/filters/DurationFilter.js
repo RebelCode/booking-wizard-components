@@ -65,10 +65,23 @@ export default {
           return acc
         }, {})
     },
+
+    /**
+     * Duration exposed value for outside consuming.
+     *
+     * @since [*next-version*]
+     *
+     * @return {*}
+     */
+    durationExposedValue () {
+      if (!this.filter.duration) {
+        return false
+      }
+      return this.service.sessionTypes.find(sessionType => this._getSessionTypeId(sessionType) === this.filter.duration)
+    },
   },
   methods: {
     _getSessionTypeId (sessionType) {
-      // console.info({sessionType})
       return sessionType.label + String(sessionType.data.duration)
     },
 

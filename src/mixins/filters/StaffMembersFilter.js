@@ -50,6 +50,26 @@ export default {
           return acc
         }, {})
     },
+
+    /**
+     * Staff member exposed value for outside consuming.
+     *
+     * @since [*next-version*]
+     *
+     * @return {*}
+     */
+    staffMemberExposedValue () {
+      if (!this.filter.staffMember) {
+        return false
+      }
+      for (let sessionType of this.service.sessionTypes) {
+        let foundStaffMember = sessionType.data.resources.find(resource => Number(resource.id) === Number(this.filter.staffMember))
+        if (!!foundStaffMember) {
+          return foundStaffMember
+        }
+      }
+      return false
+    },
   },
   methods: {
     /**
