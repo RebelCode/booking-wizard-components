@@ -113,7 +113,25 @@ export default {
       if (!foundSessionType) {
         return false
       }
-      return foundSessionType.data.duration === session.duration
+      return foundSessionType.data.duration === session.duration && this._matchesSessionResources(foundSessionType, session)
+    },
+
+    /**
+     * Check whether the session type resources matches session resources.
+     *
+     * @since [*next-version*]
+     *
+     * @param sessionType
+     * @param session
+     *
+     * @return {boolean}
+     */
+    _matchesSessionResources (sessionType, session) {
+      let sessionTypeResources = sessionType.data.resources.map(resource => resource.id)
+
+      return sessionTypeResources.reduce((res, sessionTypeResourceId) => {
+        return res && session.resources.indexOf(sessionTypeResourceId) > -1
+      }, true)
     },
 
     /**
