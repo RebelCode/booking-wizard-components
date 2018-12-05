@@ -16,11 +16,11 @@
  *
  * @return {object}
  */
-export default function CfServiceSessionSelector (CreateDatetimeCapable, sessionsApi, dateFormats) {
+export default function CfServiceSessionSelector (CreateDatetimeCapable, SessionsFilterCapable, sessionsApi, dateFormats) {
   return {
     template: '#service-session-selector-template',
 
-    mixins: [ CreateDatetimeCapable ],
+    mixins: [ CreateDatetimeCapable, SessionsFilterCapable ],
 
     inject: {
       /**
@@ -36,13 +36,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       'session-date-picker': 'session-date-picker',
-
-      /**
-       * Session duration picker component, allows to select session duration.
-       *
-       * @since [*next-version*]
-       */
-      'session-duration-picker': 'session-duration-picker',
 
       /**
        * Date navigation component, for switching between days.
@@ -139,17 +132,27 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
         /**
          * @since [*next-version*]
          *
-         * @property {object} sessionType Selected session duration
+         * @property {Date} openedOnDate Date, on which datepicker is opened.
          */
-        sessionType: null,
+        openedOnDate: this.createLocalDatetime().toDate(),
 
         /**
          * @since [*next-version*]
          *
-         * @property {Date} openedOnDate Date, on which datepicker is opened.
+         * @property {boolean} isMounted Whether component is mounted.
          */
-        openedOnDate: this.createLocalDatetime().toDate()
+        isMounted: false
       }
+    },
+    /**
+     * Set isSeeding flag when component is mounted.
+     *
+     * @since [*next-version*]
+     */
+    mounted () {
+      this.$nextTick(() => {
+        this.isMounted = true
+      })
     },
     watch: {
       /**
@@ -159,7 +162,9 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @since [*next-version*]
        */
       service () {
-        this.sessionType = null
+        this.filter.duration = null
+        this.filter.staffMember = null
+
         this.$nextTick(this._setCleanStateValues)
       },
 
@@ -257,11 +262,11 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        * @return {boolean}
        */
       isDailyDuration () {
-        if (!this.sessionType) {
+        if (!this.filter.duration) {
           return false
         }
-        return this.sessionType.data.duration >= 86400
-      }
+        return this.filter.duration >= 86400
+      },
     },
     /**
      * Hook that would be triggered when component is created. Here
@@ -300,9 +305,8 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
        */
       initShowMode () {
         this.preloadedSession = this.sessionReadTransformer.transform(this.value)
-        this.sessionType = this.service.sessionTypes.find(sessionType => {
-          return sessionType.data.duration === this.preloadedSession.duration
-        })
+        this.selectFilters(this.preloadedSession)
+
         this.sessions = [this.preloadedSession]
 
         this.$nextTick(() => {
@@ -474,7 +478,6 @@ export default function CfServiceSessionSelector (CreateDatetimeCapable, session
     },
     components: {
       'session-time-picker': 'session-time-picker',
-      'session-duration-picker': 'session-duration-picker',
       'session-date-picker': 'session-date-picker',
       'date-navigator': 'date-navigator'
     }

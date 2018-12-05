@@ -5,9 +5,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [[*next-version*]] - YYYY-MM-DD
-## [0.1.12] - 2018-11-06
+## [0.1.12] - 2018-12-05
+### Added
+- Added new flexible sessions filtering system for filtering sessions by duration and resources.
+
 ### Changed
 - Using updated structure of services. `sessionLenths` key is changed to `sessionTypes`.
+
+### Removed
+- Removed duration picker component. Use new filters values and native selects instead.
 
 ## [0.1.11] - 2018-09-21
 ### Fixed
